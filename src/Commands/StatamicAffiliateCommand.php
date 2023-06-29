@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Larsvg\StatamicAffiliate\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class StatamicAffiliateCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'statamic-affiliate';
 
     public $description = 'My command';
 
