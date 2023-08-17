@@ -16,10 +16,6 @@ class StatamicAffiliateCommand extends Command
     {
         $url = 'https://files.channable.com/NZsY2CW84UUY7_Qbmd7t9Q==.csv';
 
-
-
-
-
         $items = new AffiliateCollection();
 
         $items[] = new AfilliateItem();
@@ -27,7 +23,6 @@ class StatamicAffiliateCommand extends Command
         $items[] = new AfilliateItem();
         $items[] = new AfilliateItem();
         $items[] = new AfilliateItem();
-
 
         $this->comment('All done');
 

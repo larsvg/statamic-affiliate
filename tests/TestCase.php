@@ -3,8 +3,8 @@
 namespace Larsvg\StatamicAffiliate\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Orchestra\Testbench\TestCase as Orchestra;
 use Larsvg\StatamicAffiliate\StatamicAffiliateServiceProvider;
+use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
