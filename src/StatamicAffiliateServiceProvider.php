@@ -2,7 +2,6 @@
 
 namespace Larsvg\StatamicAffiliate;
 
-use Larsvg\StatamicAffiliate\Commands\StatamicAffiliateCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 

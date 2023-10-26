@@ -2,17 +2,13 @@
 
 namespace Larsvg\StatamicAffiliate\Commands;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Utils;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Larsvg\StatamicAffiliate\Collections\AffiliateCollection;
-use Larsvg\StatamicAffiliate\Collections\AfilliateItem;
 use Statamic\Entries\Entry;
 
 abstract class StatamicAffiliateCommand extends Command
 {
-
     abstract public function setAffiliateItems(): AffiliateCollection;
 
     public function handle(): int
@@ -28,7 +24,7 @@ abstract class StatamicAffiliateCommand extends Command
             ->where('collection', 'products')
             ->count();
 
-        $this->comment('Total ' . $productCount . ' products');
+        $this->comment('Total '.$productCount.' products');
 
         return self::SUCCESS;
     }
@@ -75,5 +71,4 @@ abstract class StatamicAffiliateCommand extends Command
             $entry->delete();
         }
     }
-
 }
