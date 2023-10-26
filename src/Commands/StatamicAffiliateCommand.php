@@ -53,6 +53,7 @@ class StatamicAffiliateCommand extends Command
         }
 
         $this->importFeed($affiliateItems);
+        $this->removeOldProducts($affiliateItems->batchId);
 
         $productCount = Entry::query()
             ->where('collection', 'products')
@@ -79,6 +80,7 @@ class StatamicAffiliateCommand extends Command
                 $entry->set('merchant_id', $item->merchantId);
             }
 
+            $entry->set('batch_id', $affiliateCollection->batchId);
             $entry->set('title', $item->productName);
             $entry->set('product_description', $item->productDescription);
             $entry->set('price', $item->price);
@@ -86,6 +88,18 @@ class StatamicAffiliateCommand extends Command
             $entry->set('image', $item->image);
             $entry->set('stock', $item->stock);
             $entry->save();
+        }
+    }
+
+    private function removeOldProducts(string $batchId): void
+    {
+        $entries = Entry::query()
+            ->where('collection', 'products')
+            ->where('batch_id', '!=', $batchId)
+            ->get();
+
+        foreach ($entries as $entry) {
+            $entry->delete();
         }
     }
 

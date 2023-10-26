@@ -6,6 +6,15 @@ use Illuminate\Support\Collection;
 
 class AffiliateCollection extends Collection
 {
+    public readonly string $batchId;
+
+    public function __construct($items = [])
+    {
+        $this->batchId = uniqid();
+
+        parent::__construct($items);
+    }
+
     public function offsetSet($key, $value): void
     {
         if (! $value instanceof AfilliateItem) {
