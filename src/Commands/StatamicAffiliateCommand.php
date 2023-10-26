@@ -19,14 +19,15 @@ class StatamicAffiliateCommand extends Command
     {
         $this->comment('Importing affiliate data');
 
-        $affiliateItems = new AffiliateCollection;
-        $client = new Client();
-        $response = $client->get(config('statamic-affiliate.awin_import_feed'));
+        $affiliateItems           = new AffiliateCollection;
+        $affiliateItems->feedName = 'awin';
+        $client                   = new Client();
+        $response                 = $client->get(config('statamic-affiliate.awin_import_feed'));
 
         if ($response->getStatusCode() === 200) {
-            $stream = Utils::streamFor(gzdecode($response->getBody()));
+            $stream  = Utils::streamFor(gzdecode($response->getBody()));
             $csvData = $stream->getContents();
-            $items = explode("\n", $csvData);
+            $items   = explode("\n", $csvData);
 
             //dump(str_getcsv($items[0]));
 
@@ -35,13 +36,14 @@ class StatamicAffiliateCommand extends Command
             foreach ($items as $key => $line) {
                 $properties = str_getcsv($line);
 
-                if (! isset($properties[1])) {
+                if (!isset($properties[1])) {
                     continue;
                 }
 
                 $affiliateItems[] = new AfilliateItem(
                     productId: $properties[2],
                     merchantId: $properties[3],
+                    afilliateLink: $properties[0],
                     productName: $properties[1],
                     productDescription: $properties[5],
                     price: (float) $properties[7],
@@ -53,13 +55,13 @@ class StatamicAffiliateCommand extends Command
         }
 
         $this->importFeed($affiliateItems);
-        $this->removeOldProducts($affiliateItems->batchId);
+        $this->removeOldProducts($affiliateItems);
 
         $productCount = Entry::query()
             ->where('collection', 'products')
             ->count();
 
-        $this->comment('Total '.$productCount.' products');
+        $this->comment('Total ' . $productCount . ' products');
 
         return self::SUCCESS;
     }
@@ -80,6 +82,7 @@ class StatamicAffiliateCommand extends Command
                 $entry->set('merchant_id', $item->merchantId);
             }
 
+            $entry->set('affiliate_link', $item->afilliateLink);
             $entry->set('batch_id', $affiliateCollection->batchId);
             $entry->set('title', $item->productName);
             $entry->set('product_description', $item->productDescription);
@@ -87,19 +90,22 @@ class StatamicAffiliateCommand extends Command
             $entry->set('delivery_cost', $item->deliveryCost);
             $entry->set('image', $item->image);
             $entry->set('stock', $item->stock);
+            $entry->set('feed_name', $affiliateCollection->feedName);
             $entry->save();
         }
     }
 
-    private function removeOldProducts(string $batchId): void
+    private function removeOldProducts(AffiliateCollection $affiliateCollection): void
     {
         $entries = Entry::query()
             ->where('collection', 'products')
-            ->where('batch_id', '!=', $batchId)
+            ->where('batch_id', '!=', $affiliateCollection->batchId)
+            ->where('feed_name', $affiliateCollection->feedName)
             ->get();
 
         foreach ($entries as $entry) {
             $entry->delete();
         }
     }
+
 }
