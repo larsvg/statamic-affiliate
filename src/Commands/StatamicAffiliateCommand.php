@@ -18,32 +18,43 @@ class StatamicAffiliateCommand extends Command
     {
         $this->comment('Importing affiliate data');
 
-        $client = new Client();
+        $client   = new Client();
         $response = $client->get(config('statamic-affiliate.awin_import_feed'));
 
+        $affiliateItems = [];
+
         if ($response->getStatusCode() === 200) {
-            // Get the gzipped content and create a stream.
-            $stream = Utils::streamFor(gzdecode($response->getBody()));
-
-            // Now, you can read the CSV data from the stream.
+            $stream  = Utils::streamFor(gzdecode($response->getBody()));
             $csvData = $stream->getContents();
+            $items   = explode("\n", $csvData);
 
-            dd($csvData);
+            unset($items[0]);
 
-            // Process the CSV data as needed.
+            foreach ($items as $key => $line) {
+                $properties = str_getcsv($line);
+
+                if (!isset($properties[1])) {
+                    continue;
+                }
+
+                $affiliateItems[] = new AfilliateItem(
+                    productName: $properties[1],
+                    productDescription: $properties[5],
+                    price: (float) $properties[7],
+                    deliveryCost: (int) empty($properties[15]) ? 0 : $properties[15],
+                    image: $properties[12],
+                    stock: 0
+                );
+            }
+
+
         }
 
-
-//        $items = new AffiliateCollection();
-//
-//        $items[] = new AfilliateItem();
-//        $items[] = new AfilliateItem();
-//        $items[] = new AfilliateItem();
-//        $items[] = new AfilliateItem();
-//        $items[] = new AfilliateItem();
+        dd(new AffiliateCollection($affiliateItems));
 
         $this->comment('All done');
 
         return self::SUCCESS;
     }
+
 }
