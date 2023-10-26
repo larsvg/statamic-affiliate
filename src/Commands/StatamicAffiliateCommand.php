@@ -10,12 +10,16 @@ use Statamic\Entries\Entry;
 abstract class StatamicAffiliateCommand extends Command
 {
     private AffiliateCollection $affiliateCollection;
+    private string $feedName;
+
+    abstract public function setFeedName(): string;
 
     abstract public function setAffiliateCollection(): AffiliateCollection;
 
     public function handle(): int
     {
-        $this->comment('Importing affiliate data');
+        $this->feedName = $this->setFeedName();
+        $this->comment('Importing '.$this->feedName.' affiliate data');
 
         $this->affiliateCollection = $this->setAffiliateCollection();
 
@@ -56,7 +60,7 @@ abstract class StatamicAffiliateCommand extends Command
             $entry->set('delivery_cost', $item->deliveryCost);
             $entry->set('image', $item->image);
             $entry->set('stock', $item->stock);
-            $entry->set('feed_name', $this->affiliateCollection->feedName);
+            $entry->set('feed_name', $this->feedName);
             $entry->save();
         }
     }
@@ -66,7 +70,7 @@ abstract class StatamicAffiliateCommand extends Command
         $entries = Entry::query()
             ->where('collection', 'products')
             ->where('batch_id', '!=', $this->affiliateCollection->batchId)
-            ->where('feed_name', $this->affiliateCollection->feedName)
+            ->where('feed_name', $this->feedName)
             ->get();
 
         foreach ($entries as $entry) {
