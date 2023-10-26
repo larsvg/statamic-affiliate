@@ -9,16 +9,18 @@ use Statamic\Entries\Entry;
 
 abstract class StatamicAffiliateCommand extends Command
 {
-    abstract public function setAffiliateItems(): AffiliateCollection;
+    private AffiliateCollection $affiliateCollection;
+
+    abstract public function setAffiliateCollection(): AffiliateCollection;
 
     public function handle(): int
     {
         $this->comment('Importing affiliate data');
 
-        $affiliateItems = $this->setAffiliateItems();
+        $this->affiliateCollection = $this->setAffiliateCollection();
 
-        $this->importFeed($affiliateItems);
-        $this->removeOldProducts($affiliateItems);
+        $this->importFeed();
+        $this->removeOldProducts();
 
         $productCount = Entry::query()
             ->where('collection', 'products')
@@ -29,9 +31,9 @@ abstract class StatamicAffiliateCommand extends Command
         return self::SUCCESS;
     }
 
-    private function importFeed(AffiliateCollection $affiliateCollection): void
+    private function importFeed(): void
     {
-        foreach ($affiliateCollection as $item) {
+        foreach ($this->affiliateCollection as $item) {
             $entry = Entry::query()
                 ->where('collection', 'products')
                 ->where('product_id', $item->productId)
@@ -47,24 +49,24 @@ abstract class StatamicAffiliateCommand extends Command
 
             $entry->slug(Str::slug($item->productName));
             $entry->set('affiliate_link', $item->afilliateLink);
-            $entry->set('batch_id', $affiliateCollection->batchId);
+            $entry->set('batch_id', $this->affiliateCollection->batchId);
             $entry->set('title', $item->productName);
             $entry->set('product_description', $item->productDescription);
             $entry->set('price', $item->price);
             $entry->set('delivery_cost', $item->deliveryCost);
             $entry->set('image', $item->image);
             $entry->set('stock', $item->stock);
-            $entry->set('feed_name', $affiliateCollection->feedName);
+            $entry->set('feed_name', $this->affiliateCollection->feedName);
             $entry->save();
         }
     }
 
-    private function removeOldProducts(AffiliateCollection $affiliateCollection): void
+    private function removeOldProducts(): void
     {
         $entries = Entry::query()
             ->where('collection', 'products')
-            ->where('batch_id', '!=', $affiliateCollection->batchId)
-            ->where('feed_name', $affiliateCollection->feedName)
+            ->where('batch_id', '!=', $this->affiliateCollection->batchId)
+            ->where('feed_name', $this->affiliateCollection->feedName)
             ->get();
 
         foreach ($entries as $entry) {
