@@ -15,14 +15,14 @@ abstract class StatamicAffiliateCommand extends Command
 
     abstract public function setFeedName(): string;
 
-    abstract public function setAffiliateCollection(): AffiliateCollection;
+    abstract public function CollectAffiliateItems(): AffiliateCollection;
 
     public function handle(): int
     {
         $this->feedName = $this->setFeedName();
         $this->comment('Importing '.$this->feedName.' affiliate data');
 
-        $this->affiliateCollection = $this->setAffiliateCollection();
+        $this->affiliateCollection = $this->CollectAffiliateItems();
         $this->importFeed();
         $itemsRemoved = $this->removeOldProducts();
         $this->comment($this->affiliateCollection->count().' items imported, '.$itemsRemoved.' items removed');
