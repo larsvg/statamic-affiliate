@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 
 class AffiliateCollection extends Collection
 {
+    public string $feedName;
     public readonly string $batchId;
 
     public function __construct($items = [])
