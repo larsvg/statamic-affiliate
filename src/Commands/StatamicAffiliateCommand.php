@@ -10,7 +10,8 @@ use Statamic\Entries\Entry;
 abstract class StatamicAffiliateCommand extends Command
 {
     private AffiliateCollection $affiliateCollection;
-    private string              $feedName;
+
+    private string $feedName;
 
     abstract public function setFeedName(): string;
 
@@ -19,12 +20,12 @@ abstract class StatamicAffiliateCommand extends Command
     public function handle(): int
     {
         $this->feedName = $this->setFeedName();
-        $this->comment('Importing ' . $this->feedName . ' affiliate data');
+        $this->comment('Importing '.$this->feedName.' affiliate data');
 
         $this->affiliateCollection = $this->setAffiliateCollection();
         $this->importFeed();
         $itemsRemoved = $this->removeOldProducts();
-        $this->comment($this->affiliateCollection->count() . ' items imported, ' . $itemsRemoved . ' items removed');
+        $this->comment($this->affiliateCollection->count().' items imported, '.$itemsRemoved.' items removed');
 
         return self::SUCCESS;
     }
@@ -73,5 +74,4 @@ abstract class StatamicAffiliateCommand extends Command
 
         return $entries->count();
     }
-
 }
