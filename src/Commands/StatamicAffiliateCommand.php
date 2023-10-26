@@ -28,6 +28,8 @@ class StatamicAffiliateCommand extends Command
             $csvData = $stream->getContents();
             $items   = explode("\n", $csvData);
 
+            dump(str_getcsv($items[0]));
+
             unset($items[0]);
 
             foreach ($items as $key => $line) {
@@ -38,6 +40,8 @@ class StatamicAffiliateCommand extends Command
                 }
 
                 $affiliateItems[] = new AfilliateItem(
+                    productId: $properties[2],
+                    merchantId: $properties[3],
                     productName: $properties[1],
                     productDescription: $properties[5],
                     price: (float) $properties[7],
@@ -46,8 +50,6 @@ class StatamicAffiliateCommand extends Command
                     stock: 0
                 );
             }
-
-
         }
 
         dd(new AffiliateCollection($affiliateItems));

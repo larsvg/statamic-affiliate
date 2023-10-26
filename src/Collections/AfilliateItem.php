@@ -5,13 +5,16 @@ namespace Larsvg\StatamicAffiliate\Collections;
 class AfilliateItem
 {
     public function __construct(
-        private string $productName,
-        private string $productDescription,
-        private float $price,
-        private float $deliveryCost,
-        private string $image,
-        private int $stock
+        readonly private string $productId,
+        readonly private string $merchantId,
+        readonly private string $productName,
+        readonly private string $productDescription,
+        readonly private float $price,
+        readonly private float $deliveryCost,
+        readonly private string $image,
+        readonly private int $stock
     ) {
 
     }
+
 }
