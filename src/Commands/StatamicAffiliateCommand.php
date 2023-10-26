@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Larsvg\StatamicAffiliate\Collections\AffiliateCollection;
+use Larsvg\StatamicAffiliate\Collections\AfilliateItem;
 use Statamic\Entries\Entry;
 
 abstract class StatamicAffiliateCommand extends Command
@@ -56,9 +57,9 @@ abstract class StatamicAffiliateCommand extends Command
             $entry->set('product_description', $item->productDescription);
             $entry->set('price', $item->price);
             $entry->set('delivery_cost', $item->deliveryCost);
-            $entry->set('image', $item->image);
             $entry->set('stock', $item->stock);
             $entry->set('feed_name', $this->feedName);
+            $entry->set('image', $item->image);
             $entry->set('responsive', [
                 'src' => str_replace('images/', '', $image),
             ]);
@@ -81,7 +82,7 @@ abstract class StatamicAffiliateCommand extends Command
         return $entries->count();
     }
 
-    protected function uploadImage($item): string
+    protected function uploadImage(AfilliateItem $item): string
     {
         $directory = 'images/affiliate/'.$this->feedName;
         $file = $directory.'/'.$item->productId.'.jpg';
