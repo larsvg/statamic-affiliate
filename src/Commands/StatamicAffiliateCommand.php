@@ -19,15 +19,15 @@ class StatamicAffiliateCommand extends Command
     {
         $this->comment('Importing affiliate data');
 
-        $affiliateItems           = new AffiliateCollection;
+        $affiliateItems = new AffiliateCollection;
         $affiliateItems->feedName = 'awin';
-        $client                   = new Client();
-        $response                 = $client->get(config('statamic-affiliate.awin_import_feed'));
+        $client = new Client();
+        $response = $client->get(config('statamic-affiliate.awin_import_feed'));
 
         if ($response->getStatusCode() === 200) {
-            $stream  = Utils::streamFor(gzdecode($response->getBody()));
+            $stream = Utils::streamFor(gzdecode($response->getBody()));
             $csvData = $stream->getContents();
-            $items   = explode("\n", $csvData);
+            $items = explode("\n", $csvData);
 
             //dump(str_getcsv($items[0]));
 
@@ -36,7 +36,7 @@ class StatamicAffiliateCommand extends Command
             foreach ($items as $key => $line) {
                 $properties = str_getcsv($line);
 
-                if (!isset($properties[1])) {
+                if (! isset($properties[1])) {
                     continue;
                 }
 
@@ -61,7 +61,7 @@ class StatamicAffiliateCommand extends Command
             ->where('collection', 'products')
             ->count();
 
-        $this->comment('Total ' . $productCount . ' products');
+        $this->comment('Total '.$productCount.' products');
 
         return self::SUCCESS;
     }
@@ -107,5 +107,4 @@ class StatamicAffiliateCommand extends Command
             $entry->delete();
         }
     }
-
 }
