@@ -10,6 +10,7 @@ use Statamic\Entries\Entry;
 abstract class StatamicAffiliateCommand extends Command
 {
     private AffiliateCollection $affiliateCollection;
+
     private string $feedName;
 
     abstract public function setFeedName(): string;
