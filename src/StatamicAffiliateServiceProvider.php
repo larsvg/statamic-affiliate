@@ -19,7 +19,6 @@ class StatamicAffiliateServiceProvider extends PackageServiceProvider
             ->name('statamic-affiliate')
             ->hasConfigFile()
             ->hasViews()
-            ->hasMigration('create_statamic-affiliate_table')
-            ->hasCommand(StatamicAffiliateCommand::class);
+            ->hasMigration('create_statamic-affiliate_table');
     }
 }

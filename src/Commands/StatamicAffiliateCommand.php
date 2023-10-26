@@ -10,48 +10,16 @@ use Larsvg\StatamicAffiliate\Collections\AffiliateCollection;
 use Larsvg\StatamicAffiliate\Collections\AfilliateItem;
 use Statamic\Entries\Entry;
 
-class StatamicAffiliateCommand extends Command
+abstract class StatamicAffiliateCommand extends Command
 {
-    public $signature = 'app:statamic-affiliate-import';
 
-    public $description = 'Import affiliate data';
+    abstract public function setAffiliateItems(): AffiliateCollection;
 
     public function handle(): int
     {
         $this->comment('Importing affiliate data');
 
-        $affiliateItems = new AffiliateCollection;
-        $affiliateItems->feedName = 'awin';
-        $client = new Client();
-        $response = $client->get(config('statamic-affiliate.awin_import_feed'));
-
-        if ($response->getStatusCode() === 200) {
-            $stream = Utils::streamFor(gzdecode($response->getBody()));
-            $csvData = $stream->getContents();
-            $items = explode("\n", $csvData);
-
-            unset($items[0]);
-
-            foreach ($items as $key => $line) {
-                $properties = str_getcsv($line);
-
-                if (! isset($properties[1])) {
-                    continue;
-                }
-
-                $affiliateItems[] = new AfilliateItem(
-                    productId: $properties[2],
-                    merchantId: $properties[3],
-                    afilliateLink: $properties[0],
-                    productName: $properties[1],
-                    productDescription: $properties[5],
-                    price: (float) $properties[7],
-                    deliveryCost: (int) empty($properties[15]) ? 0 : $properties[15],
-                    image: $properties[12],
-                    stock: 0
-                );
-            }
-        }
+        $affiliateItems = $this->setAffiliateItems();
 
         $this->importFeed($affiliateItems);
         $this->removeOldProducts($affiliateItems);
@@ -60,12 +28,12 @@ class StatamicAffiliateCommand extends Command
             ->where('collection', 'products')
             ->count();
 
-        $this->comment('Total '.$productCount.' products');
+        $this->comment('Total ' . $productCount . ' products');
 
         return self::SUCCESS;
     }
 
-    private function importFeed(AffiliateCollection $affiliateCollection)
+    private function importFeed(AffiliateCollection $affiliateCollection): void
     {
         foreach ($affiliateCollection as $item) {
             $entry = Entry::query()
@@ -107,4 +75,5 @@ class StatamicAffiliateCommand extends Command
             $entry->delete();
         }
     }
+
 }
