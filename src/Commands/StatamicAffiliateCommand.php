@@ -5,6 +5,7 @@ namespace Larsvg\StatamicAffiliate\Commands;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Utils;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use Larsvg\StatamicAffiliate\Collections\AffiliateCollection;
 use Larsvg\StatamicAffiliate\Collections\AfilliateItem;
 use Statamic\Entries\Entry;
@@ -19,24 +20,22 @@ class StatamicAffiliateCommand extends Command
     {
         $this->comment('Importing affiliate data');
 
-        $affiliateItems = new AffiliateCollection;
+        $affiliateItems           = new AffiliateCollection;
         $affiliateItems->feedName = 'awin';
-        $client = new Client();
-        $response = $client->get(config('statamic-affiliate.awin_import_feed'));
+        $client                   = new Client();
+        $response                 = $client->get(config('statamic-affiliate.awin_import_feed'));
 
         if ($response->getStatusCode() === 200) {
-            $stream = Utils::streamFor(gzdecode($response->getBody()));
+            $stream  = Utils::streamFor(gzdecode($response->getBody()));
             $csvData = $stream->getContents();
-            $items = explode("\n", $csvData);
-
-            //dump(str_getcsv($items[0]));
+            $items   = explode("\n", $csvData);
 
             unset($items[0]);
 
             foreach ($items as $key => $line) {
                 $properties = str_getcsv($line);
 
-                if (! isset($properties[1])) {
+                if (!isset($properties[1])) {
                     continue;
                 }
 
@@ -61,7 +60,7 @@ class StatamicAffiliateCommand extends Command
             ->where('collection', 'products')
             ->count();
 
-        $this->comment('Total '.$productCount.' products');
+        $this->comment('Total ' . $productCount . ' products');
 
         return self::SUCCESS;
     }
@@ -82,6 +81,7 @@ class StatamicAffiliateCommand extends Command
                 $entry->set('merchant_id', $item->merchantId);
             }
 
+            $entry->slug(Str::slug($item->productName));
             $entry->set('affiliate_link', $item->afilliateLink);
             $entry->set('batch_id', $affiliateCollection->batchId);
             $entry->set('title', $item->productName);
@@ -107,4 +107,5 @@ class StatamicAffiliateCommand extends Command
             $entry->delete();
         }
     }
+
 }
