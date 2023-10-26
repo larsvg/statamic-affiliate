@@ -7,6 +7,7 @@ use GuzzleHttp\Psr7\Utils;
 use Illuminate\Console\Command;
 use Larsvg\StatamicAffiliate\Collections\AffiliateCollection;
 use Larsvg\StatamicAffiliate\Collections\AfilliateItem;
+use Statamic\Entries\Entry;
 
 class StatamicAffiliateCommand extends Command
 {
@@ -18,17 +19,16 @@ class StatamicAffiliateCommand extends Command
     {
         $this->comment('Importing affiliate data');
 
-        $client   = new Client();
-        $response = $client->get(config('statamic-affiliate.awin_import_feed'));
-
-        $affiliateItems = [];
+        $affiliateItems = new AffiliateCollection;
+        $client         = new Client();
+        $response       = $client->get(config('statamic-affiliate.awin_import_feed'));
 
         if ($response->getStatusCode() === 200) {
             $stream  = Utils::streamFor(gzdecode($response->getBody()));
             $csvData = $stream->getContents();
             $items   = explode("\n", $csvData);
 
-            dump(str_getcsv($items[0]));
+            //dump(str_getcsv($items[0]));
 
             unset($items[0]);
 
@@ -52,11 +52,41 @@ class StatamicAffiliateCommand extends Command
             }
         }
 
-        dd(new AffiliateCollection($affiliateItems));
+        $this->importFeed($affiliateItems);
 
-        $this->comment('All done');
+        $productCount = Entry::query()
+            ->where('collection', 'products')
+            ->count();
+
+        $this->comment('Total ' . $productCount . ' products');
 
         return self::SUCCESS;
+    }
+
+    private function importFeed(AffiliateCollection $affiliateCollection)
+    {
+        foreach ($affiliateCollection as $item) {
+            $entry = Entry::query()
+                ->where('collection', 'products')
+                ->where('product_id', $item->productId)
+                ->where('merchant_id', $item->merchantId)
+                ->first();
+
+            if (empty($entry)) {
+                $entry = new Entry();
+                $entry->collection('products');
+                $entry->set('product_id', $item->productId);
+                $entry->set('merchant_id', $item->merchantId);
+            }
+
+            $entry->set('title', $item->productName);
+            $entry->set('product_description', $item->productDescription);
+            $entry->set('price', $item->price);
+            $entry->set('delivery_cost', $item->deliveryCost);
+            $entry->set('image', $item->image);
+            $entry->set('stock', $item->stock);
+            $entry->save();
+        }
     }
 
 }
