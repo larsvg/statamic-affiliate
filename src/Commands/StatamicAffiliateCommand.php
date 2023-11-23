@@ -60,6 +60,7 @@ abstract class StatamicAffiliateCommand extends Command
             $entry->set('stock', $item->stock);
             $entry->set('feed_name', $this->feedName);
             $entry->set('image', $item->image);
+            $entry->set('merchant_name', $item->merchantName);
             $entry->set('responsive', [
                 'src' => str_replace('images/', '', $image),
             ]);

@@ -7,13 +7,14 @@ class AfilliateItem
     public function __construct(
         readonly public string $productId,
         readonly public string $merchantId,
+        readonly public int $merchantName,
         readonly public string $afilliateLink,
         readonly public string $productName,
         readonly public string $productDescription,
         readonly public float $price,
         readonly public float $deliveryCost,
         readonly public string $image,
-        readonly public int $stock
+        readonly public int $stock,
     ) {
 
     }
