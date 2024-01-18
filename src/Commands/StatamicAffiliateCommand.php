@@ -8,6 +8,9 @@ use Illuminate\Support\Str;
 use Larsvg\StatamicAffiliate\Collections\AffiliateCollection;
 use Larsvg\StatamicAffiliate\Collections\AfilliateItem;
 use Statamic\Entries\Entry;
+use Statamic\Facades\Taxonomy;
+use Statamic\Facades\Term;
+use Statamic\Taxonomies\LocalizedTerm;
 
 abstract class StatamicAffiliateCommand extends Command
 {
@@ -102,5 +105,32 @@ abstract class StatamicAffiliateCommand extends Command
         );
 
         return $file;
+    }
+
+    protected function merchantTaxonomy(string $merchantName): ?LocalizedTerm
+    {
+        if (empty($merchantName)) {
+            return null;
+        }
+
+        $merchant = Taxonomy::find('merchant')
+            ->queryTerms()
+            ->where('title', '=', $merchantName)
+            ->first();
+
+        if (empty($merchant)) {
+            Term::make()
+                ->taxonomy('merchant')
+                ->slug(Str::slug($merchantName))
+                ->data(['title' => $merchantName])
+                ->save();
+
+            $merchant = Taxonomy::find('merchant')
+                ->queryTerms()
+                ->where('title', '=', $merchantName)
+                ->first();
+        }
+
+        return $merchant;
     }
 }
