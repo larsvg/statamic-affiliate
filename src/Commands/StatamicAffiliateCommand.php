@@ -67,6 +67,11 @@ abstract class StatamicAffiliateCommand extends Command
             $entry->set('responsive', [
                 'src' => str_replace('images/', '', $image),
             ]);
+
+            if (!empty($item->mechantTaxonomy)) {
+                $entry->set('merchant', $item->mechantTaxonomy->slug);
+            }
+
             $entry->save();
         }
     }
