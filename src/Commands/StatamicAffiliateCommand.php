@@ -69,7 +69,7 @@ abstract class StatamicAffiliateCommand extends Command
             ]);
 
             if (! empty($item->mechantTaxonomy)) {
-                $entry->set('merchant', $item->mechantTaxonomy->slug);
+                $entry->set('merchants', $item->mechantTaxonomy->slug);
             }
 
             $entry->save();
@@ -118,19 +118,19 @@ abstract class StatamicAffiliateCommand extends Command
             return null;
         }
 
-        $merchant = Taxonomy::find('merchant')
+        $merchant = Taxonomy::find('merchants')
             ->queryTerms()
             ->where('title', '=', $merchantName)
             ->first();
 
         if (empty($merchant)) {
             Term::make()
-                ->taxonomy('merchant')
+                ->taxonomy('merchants')
                 ->slug(Str::slug($merchantName))
                 ->data(['title' => $merchantName])
                 ->save();
 
-            $merchant = Taxonomy::find('merchant')
+            $merchant = Taxonomy::find('merchants')
                 ->queryTerms()
                 ->where('title', '=', $merchantName)
                 ->first();
