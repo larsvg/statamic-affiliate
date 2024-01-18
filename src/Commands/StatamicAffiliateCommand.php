@@ -68,7 +68,7 @@ abstract class StatamicAffiliateCommand extends Command
                 'src' => str_replace('images/', '', $image),
             ]);
 
-            if (!empty($item->mechantTaxonomy)) {
+            if (! empty($item->mechantTaxonomy)) {
                 $entry->set('merchant', $item->mechantTaxonomy->slug);
             }
 
