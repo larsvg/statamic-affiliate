@@ -1,0 +1,12 @@
+title: Products
+template: products/show
+layout: layout
+revisions: false
+route: 'product/{slug}'
+sort_dir: asc
+preview_targets:
+  -
+    label: Entry
+    url: '{permalink}'
+structure:
+  root: false

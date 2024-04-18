@@ -62,7 +62,8 @@ class PublishAffiliateStubs extends Command
     protected function publishContent(): void
     {
         $contents = [
-            //
+            'collections/categories.yaml',
+            'collections/products.yaml',
         ];
 
         foreach ($contents as $content) {
