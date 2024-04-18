@@ -2,22 +2,29 @@
 
 namespace Larsvg\StatamicAffiliate;
 
+use Larsvg\StatamicAffiliate\Commands\PublishAffiliateStubs;
 use Statamic\Providers\AddonServiceProvider;
+use Statamic\Statamic;
 
 class ServiceProvider extends AddonServiceProvider
 {
+    protected $commands = [
+        PublishAffiliateStubs::class,
+    ];
+
     public function bootAddon()
     {
+//        Statamic::afterInstalled(function ($command) {
+//            $command->call('affiliate:publish-stubs');
+//        });
 
+        $this->registerPublishableViews();
     }
 
-    public function boot(): void
+    protected function registerPublishableViews()
     {
-
-    }
-
-    public function register(): void
-    {
-
+        $this->publishes([
+            __DIR__ . '/../resources/views' => resource_path('views/vendor/statamic-affiliate'),
+        ], 'statamic-affiliate-views');
     }
 }
