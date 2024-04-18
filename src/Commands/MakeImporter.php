@@ -33,7 +33,7 @@ class MakeImporter extends Command
         File::put($target, $content);
 
         $this->info('Command created: ' . $fileName . '. Run `php artisan affiliate:' . $name . '-import` to import the feed.');
-        $this->info('Add the command to the schedule in app/Console/Kernel.php');
+        $this->info('Add the command to the schedule in app/Console/Kernel.php to run it automatically.');
 
         return self::SUCCESS;
     }
