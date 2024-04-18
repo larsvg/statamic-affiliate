@@ -3,7 +3,7 @@
 namespace Larsvg\StatamicAffiliate\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Larsvg\StatamicAffiliate\StatamicAffiliateServiceProvider;
+use Larsvg\StatamicAffiliate\ServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
@@ -20,7 +20,7 @@ class TestCase extends Orchestra
     protected function getPackageProviders($app)
     {
         return [
-            StatamicAffiliateServiceProvider::class,
+            ServiceProvider::class,
         ];
     }
 

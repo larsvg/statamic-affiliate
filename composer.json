@@ -60,7 +60,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Larsvg\\StatamicAffiliate\\StatamicAffiliateServiceProvider"
+                "Larsvg\\StatamicAffiliate\\ServiceProvider"
             ],
             "aliases": {
                 "StatamicAffiliate": "Larsvg\\StatamicAffiliate\\Facades\\StatamicAffiliate"
