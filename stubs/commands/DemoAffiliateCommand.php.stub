@@ -1,0 +1,78 @@
+<?php
+
+use Exception;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Psr7\Utils;
+use Larsvg\StatamicAffiliate\Collections\AffiliateCollection;
+use Larsvg\StatamicAffiliate\Collections\AfilliateItem;
+use Larsvg\StatamicAffiliate\Commands\StatamicAffiliateCommand;
+
+class {feed-name-ucfirst}AffiliateCommand extends StatamicAffiliateCommand
+{
+    public $signature = 'affiliate:{feed-name}-import';
+
+    public $description = '{feed-name} affiliate data';
+
+    public function setFeedName(): string
+    {
+        return '{feed-name}';
+    }
+
+    /**
+     * @throws GuzzleException
+     * @throws Exception
+     */
+    public function CollectAffiliateItems(): AffiliateCollection
+    {
+        $affiliateCollection = new AffiliateCollection();
+        $client              = new Client();
+        $response            = $client->get('https://example.com/feed.csv');
+
+        if ($response->getStatusCode() !== 200) {
+            throw new Exception('Could not fetch feed.');
+        }
+
+        $csvData = $response->getBody()->getContents();
+        $items   = explode("\n", $csvData);
+
+        // Remove header
+        unset($items[0]);
+
+        $this->info('Importing ' . count($items) . ' items');
+
+        foreach ($items as $line) {
+            $properties = explode(';', $line);
+            if (!isset($properties[1])) {
+                continue;
+            }
+
+            $merchantName       = empty($properties[45]) ? '' : $properties[45];
+            $productId          = $properties[0];
+            $affiliateLink      = $properties[5];
+            $productName        = $properties[1];
+            $productDescription = $properties[4];
+            $price              = (float) $properties[3];
+            $deliveryCost       = (int) empty($properties[24]) ? 0 : $properties[24];
+            $image              = $properties[6];
+            $stock              = (int) empty($properties[19]) ? 0 : $properties[19];
+
+            $affiliateCollection[] = new AfilliateItem(
+                productId: $productId,
+                merchantId: '',
+                merchantName: $merchantName,
+                mechantTaxonomy: $this->merchantTaxonomy($merchantName),
+                afilliateLink: $affiliateLink,
+                productName: $productName,
+                productDescription: $productDescription,
+                price: $price,
+                deliveryCost: $deliveryCost,
+                image: $image,
+                stock: $stock,
+            );
+        }
+
+        return $affiliateCollection;
+    }
+
+}

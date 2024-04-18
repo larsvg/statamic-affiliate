@@ -2,6 +2,7 @@
 
 namespace Larsvg\StatamicAffiliate;
 
+use Larsvg\StatamicAffiliate\Commands\MakeImporter;
 use Larsvg\StatamicAffiliate\Commands\PublishAffiliateStubs;
 use Statamic\Providers\AddonServiceProvider;
 use Statamic\Statamic;
@@ -20,6 +21,7 @@ class ServiceProvider extends AddonServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 PublishAffiliateStubs::class,
+                MakeImporter::class,
             ]);
         }
     }
