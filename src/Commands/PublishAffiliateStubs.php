@@ -18,7 +18,7 @@ class PublishAffiliateStubs extends Command
         $this->publishContent();
         $this->publishViews();
 
-        $this->comment('All done');
+        $this->comment('Stubs published');
 
         return self::SUCCESS;
     }
