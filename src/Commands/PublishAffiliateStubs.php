@@ -28,6 +28,7 @@ class PublishAffiliateStubs extends Command
         $blueprints = [
             'collections/categories/category.yaml',
             'collections/products/product.yaml',
+            'taxonomies/merchants/merchant.yaml',
         ];
 
         foreach ($blueprints as $blueprint) {
