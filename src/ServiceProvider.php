@@ -8,23 +8,20 @@ use Statamic\Statamic;
 
 class ServiceProvider extends AddonServiceProvider
 {
-    protected $commands = [
-        PublishAffiliateStubs::class,
-    ];
-
     public function bootAddon()
     {
-//        Statamic::afterInstalled(function ($command) {
-//            $command->call('affiliate:publish-stubs');
-//        });
-
-        $this->registerPublishableViews();
+        Statamic::afterInstalled(function($command) {
+            $command->call('affiliate:publish-stubs');
+        });
     }
 
-    protected function registerPublishableViews()
+    public function boot()
     {
-        $this->publishes([
-            __DIR__ . '/../resources/views' => resource_path('views/vendor/statamic-affiliate'),
-        ], 'statamic-affiliate-views');
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                PublishAffiliateStubs::class,
+            ]);
+        }
     }
+
 }
