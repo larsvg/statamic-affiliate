@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Console\Commands;
+
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;

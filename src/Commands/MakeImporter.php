@@ -38,6 +38,6 @@ class MakeImporter extends Command
         $content = str_replace('{feed-name-ucfirst}', ucfirst($name), $content);
         $content = str_replace('{feed-name}', $name, $content);
 
-
+        File::put(app_path('console/Commands/') . ucfirst($name).'AffiliateCommand.php', $content);
     }
 }
