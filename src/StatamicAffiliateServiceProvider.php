@@ -3,21 +3,12 @@
 namespace Larsvg\StatamicAffiliate;
 
 use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Statamic\Providers\AddonServiceProvider;
 
-class StatamicAffiliateServiceProvider extends PackageServiceProvider
+class StatamicAffiliateServiceProvider extends AddonServiceProvider
 {
     public function configurePackage(Package $package): void
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
-        $package
-            ->name('statamic-affiliate')
-            ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_statamic-affiliate_table');
+        dd('init');
     }
 }
