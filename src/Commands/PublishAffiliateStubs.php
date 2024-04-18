@@ -37,7 +37,8 @@ class PublishAffiliateStubs extends Command
     protected function publishViews(): void
     {
         $views = [
-            //
+            'categories/show.antlers.html',
+            'products/show.antlers.html',
         ];
 
         foreach ($views as $view) {

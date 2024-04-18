@@ -1,0 +1,177 @@
+
+<div class="flex flex-col gap-4 my-16">
+    <div class="fluid-container flex flex-col gap-4">
+
+        {{ partial:typography/h1 :content="title" }}
+
+    </div>
+
+    {{ if (get:page == '1' || !get:page) }}
+        <div>
+            {{ page_builder scope="block" }}
+                {{ partial src="page_builder/{type}" }}
+            {{ /page_builder }}
+        </div>
+    {{ /if }}
+
+    <div class="fluid-container flex gap-12 ">
+
+        <div class="w-2/5">
+
+            <ul>
+                {{ nav:collection:categories }}
+                <li>
+                    <a href="{{ url }}" {{ if is_current || is_parent }} class="font-bold" {{ /if }} >
+                    {{ title }}
+                    </a>
+
+                    <ul class="ml-4">
+                        {{ children }}
+
+                        <li>
+                            <a href="{{ url }}" {{ if is_current || is_parent }} class="font-bold" {{ /if }}>
+                            {{ title }}
+                            </a>
+
+                            <ul class="ml-4">
+                                {{ children }}
+
+                                <li>
+                                    <a href="{{ url }}" {{ if is_current || is_parent }} class="font-bold" {{ /if }}>
+                                    {{ title }}
+                                    </a>
+                                </li>
+
+                                {{ /children }}
+                            </ul>
+
+                        </li>
+
+                        {{ /children }}
+                    </ul>
+
+                </li>
+                {{ /nav:collection:categories }}
+            </ul>
+
+        </div>
+        <div class="flex flex-col gap-2">
+            {{ collection:products category:contains="{id}" as="product" paginate="10"  }}
+
+            <div class="flex flex-col items-end gap-4">
+                {{ paginate }}
+
+                <div class="text-xs">
+                    {{ total_items }} producten
+                </div>
+
+                {{ /paginate }}
+            </div>
+
+            <div class="flex flex-col gap-4">
+
+                {{ if no_results }}
+                <p>Geen producten gevonden.</p>
+                {{ /if }}
+
+                <div class="grid grid-cols-2 gap-4">
+                    {{ product }}
+                    <article class="bg-gray-100 rounded hover:scale-110 transition-all">
+                        <a href="{{ url }}" class="flex items-center">
+                            <div class="p-2">
+                                {{ responsive:responsive ratio="1/1" class="w-32" }}
+                            </div>
+
+                            <div class="text-sm leading-tight flex flex-col gap-2">
+                                <div>
+                                    {{ title }}
+                                </div>
+                                <div class="text-green-600">
+                                    &euro; {{ price }}
+                                </div>
+                            </div>
+                        </a>
+                    </article>
+                    {{ /product }}
+                </div>
+
+            </div>
+
+            <div class="flex items-center justify-center">
+
+                <div class="flex flex-col gap-4">
+
+                    {{ paginate }}
+                        <ul class="flex gap-2">
+                            {{ if prev_page }}
+                                <li><a href="{{ prev_page }}">{{ svg:arrow-long-left class="h-auto w-5 mt-[2px] fill-current" }}</a></li>
+                            {{ else }}
+                                <li class="text-gray-200"><span>{{ svg:arrow-long-left class="h-auto w-5 mt-[2px] fill-current" }}</span></li>
+                            {{ /if }}
+
+                            {{ links:segments }}
+
+                                {{ first }}
+                                    {{ if page == current_page }}
+                                        <li class="font-bold"><span>{{ page }}</span></li>
+                                    {{ else }}
+                                        <li><a href="{{ url }}">{{ page }}</a></li>
+                                    {{ /if }}
+                                {{ /first }}
+
+                                {{ if slider }}
+                                    <li class="disabled"><span>...</span></li>
+                                {{ /if }}
+
+                                {{ slider }}
+                                    {{ if page == current_page }}
+                                        <li class="font-bold"><span>{{ page }}</span></li>
+                                    {{ else }}
+                                        <li><a href="{{ url }}">{{ page }}</a></li>
+                                    {{ /if }}
+                                {{ /slider }}
+
+                                {{ if slider || (!slider && last) }}
+                                    <li class="text-gray-200"><span>...</span></li>
+                                {{ /if }}
+
+                                {{ last }}
+                                    {{ if page == current_page }}
+                                        <li class="font-bold"><span>{{ page }}</span></li>
+                                    {{ else }}
+                                        <li><a href="{{ url }}">{{ page }}</a></li>
+                                    {{ /if }}
+                                {{ /last }}
+
+                            {{ /links:segments }}
+
+                            {{ if next_page }}
+                                <li><a href="{{ next_page }}">{{ svg:arrow-long-right class="h-auto w-5 mt-[2px] fill-current" }}</a></li>
+                            {{ else }}
+                                <li class="text-gray-200"><span>{{ svg:arrow-long-right class="h-auto w-5 mt-[2px] fill-current" }}</span></li>
+                            {{ /if }}
+                        </ul>
+                    {{ /paginate }}
+
+
+                </div>
+            </div>
+
+            {{ /collection:products }}
+        </div>
+
+    </div>
+
+    {{ if (get:page == '1' || !get:page) }}
+        <div class="fluid-container flex flex-col gap-2">
+            {{ partial:typography/prose as="bottom_article" class="contents" }}
+                {{ bottom_article }}
+                <div>
+                    {{ partial src="components/{type}" }}
+                </div>
+                {{ /bottom_article }}
+            {{ /partial:typography/prose }}
+        </div>
+    {{ /if }}
+
+</div>
