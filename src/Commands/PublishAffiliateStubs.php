@@ -26,7 +26,8 @@ class PublishAffiliateStubs extends Command
     protected function publishBlueprints(): void
     {
         $blueprints = [
-            //
+            'collections/categories/category.yaml',
+            'collections/products/product.yaml',
         ];
 
         foreach ($blueprints as $blueprint) {
