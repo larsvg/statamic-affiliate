@@ -11,7 +11,7 @@ class PublishAffiliateStubs extends Command
     protected $signature   = 'affiliate:publish-stubs';
     protected $description = 'Publish the affiliate stubs.';
 
-    public function handle()
+    public function handle(): int
     {
         $this->publishFieldsets();
         $this->publishBlueprints();
