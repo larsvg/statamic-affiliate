@@ -11,7 +11,7 @@ class ServiceProvider extends AddonServiceProvider
 {
     public function bootAddon()
     {
-        Statamic::afterInstalled(function($command) {
+        Statamic::afterInstalled(function ($command) {
             $command->call('affiliate:publish-stubs');
         });
     }
@@ -25,5 +25,4 @@ class ServiceProvider extends AddonServiceProvider
             ]);
         }
     }
-
 }

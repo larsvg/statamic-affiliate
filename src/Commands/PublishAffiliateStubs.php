@@ -4,11 +4,11 @@ namespace Larsvg\StatamicAffiliate\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-use Symfony\Component\Yaml\Yaml;
 
 class PublishAffiliateStubs extends Command
 {
-    protected $signature   = 'affiliate:publish-stubs';
+    protected $signature = 'affiliate:publish-stubs';
+
     protected $description = 'Publish the affiliate stubs.';
 
     public function handle(): int
@@ -32,7 +32,7 @@ class PublishAffiliateStubs extends Command
         ];
 
         foreach ($blueprints as $blueprint) {
-            File::copy(__DIR__ . '/../../stubs/blueprints/' . $blueprint, resource_path('blueprints/' . $blueprint));
+            File::copy(__DIR__.'/../../stubs/blueprints/'.$blueprint, resource_path('blueprints/'.$blueprint));
         }
     }
 
@@ -44,7 +44,7 @@ class PublishAffiliateStubs extends Command
         ];
 
         foreach ($views as $view) {
-            File::copy(__DIR__ . '/../../stubs/views/' . $view, resource_path('views/' . $view));
+            File::copy(__DIR__.'/../../stubs/views/'.$view, resource_path('views/'.$view));
         }
     }
 
@@ -55,7 +55,7 @@ class PublishAffiliateStubs extends Command
         ];
 
         foreach ($fieldsets as $fieldset) {
-            File::copy(__DIR__ . '/../../stubs/fieldsets/' . $fieldset, resource_path('fieldsets/' . $fieldset));
+            File::copy(__DIR__.'/../../stubs/fieldsets/'.$fieldset, resource_path('fieldsets/'.$fieldset));
         }
     }
 
@@ -67,9 +67,8 @@ class PublishAffiliateStubs extends Command
         ];
 
         foreach ($contents as $content) {
-            $file = 'content/' . $content;
-            File::copy(__DIR__ . '/../../stubs/content/' . $content, base_path($file));
+            $file = 'content/'.$content;
+            File::copy(__DIR__.'/../../stubs/content/'.$content, base_path($file));
         }
     }
-
 }
