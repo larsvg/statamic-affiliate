@@ -13,6 +13,12 @@ class PublishAffiliateStubs extends Command
 
     public function handle(): int
     {
+        File::makeDirectory(resource_path('blueprints/categories'), 0755, true, true);
+        File::makeDirectory(resource_path('blueprints/products'), 0755, true, true);
+        File::makeDirectory(resource_path('taxonomies/merchants'), 0755, true, true);
+        File::makeDirectory(resource_path('views/categories'), 0755, true, true);
+        File::makeDirectory(resource_path('views/products'), 0755, true, true);
+
         $this->publishFieldsets();
         $this->publishBlueprints();
         $this->publishContent();
