@@ -15,7 +15,7 @@ class PublishAffiliateStubs extends Command
     {
         File::makeDirectory(resource_path('blueprints/collections/categories'), 0755, true, true);
         File::makeDirectory(resource_path('blueprints/collections/products'), 0755, true, true);
-        File::makeDirectory(resource_path('taxonomies/merchants'), 0755, true, true);
+        File::makeDirectory(resource_path('blueprints/taxonomies/merchants'), 0755, true, true);
         File::makeDirectory(resource_path('views/categories'), 0755, true, true);
         File::makeDirectory(resource_path('views/products'), 0755, true, true);
 
