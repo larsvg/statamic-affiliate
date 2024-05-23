@@ -17,9 +17,7 @@
     ],
     "require": {
         "php": "^8.1",
-        "laravel/framework": "^10.3|^11.3",
-        "spatie/laravel-package-tools": "^1.14.0",
-        "illuminate/contracts": "^10.0"
+        "laravel/framework": "^10.3|^11.3"
     },
     "require-dev": {
         "laravel/pint": "^1.0",
