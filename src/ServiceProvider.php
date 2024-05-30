@@ -11,11 +11,6 @@ use Statamic\Statamic;
 
 class ServiceProvider extends AddonServiceProvider
 {
-    protected $listen = [
-        FeedImported::class => [
-            LogNewFeedItems::class,
-        ]
-    ];
 
 
     public function bootAddon()
@@ -34,5 +29,22 @@ class ServiceProvider extends AddonServiceProvider
                 MakeImporter::class,
             ]);
         }
+        $this->registerEventListeners();
     }
+
+    private function registerEventListeners(): void
+    {
+        $events = [
+            FeedImported::class => [
+                LogNewFeedItems::class,
+            ]
+        ];
+
+        foreach ($events as $event => $listeners) {
+            foreach ($listeners as $listener) {
+                $this->app['events']->listen($event, $listener);
+            }
+        }
+    }
+
 }
