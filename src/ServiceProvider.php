@@ -4,6 +4,7 @@ namespace Larsvg\StatamicAffiliate;
 
 use Larsvg\StatamicAffiliate\Commands\MakeImporter;
 use Larsvg\StatamicAffiliate\Commands\PublishAffiliateStubs;
+use Statamic\Facades\Collection;
 use Statamic\Providers\AddonServiceProvider;
 use Statamic\Statamic;
 
