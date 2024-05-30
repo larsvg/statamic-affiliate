@@ -6,6 +6,7 @@ use Larsvg\StatamicAffiliate\Commands\MakeImporter;
 use Larsvg\StatamicAffiliate\Commands\PublishAffiliateStubs;
 use Statamic\Providers\AddonServiceProvider;
 use Statamic\Statamic;
+use Statamic\Facades\Collection;
 
 class ServiceProvider extends AddonServiceProvider
 {
