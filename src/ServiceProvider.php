@@ -4,7 +4,6 @@ namespace Larsvg\StatamicAffiliate;
 
 use Larsvg\StatamicAffiliate\Commands\MakeImporter;
 use Larsvg\StatamicAffiliate\Commands\PublishAffiliateStubs;
-use Statamic\Facades\Collection;
 use Statamic\Providers\AddonServiceProvider;
 use Statamic\Statamic;
 
@@ -15,7 +14,6 @@ class ServiceProvider extends AddonServiceProvider
         Statamic::afterInstalled(function ($command) {
             $command->call('affiliate:publish-stubs');
         });
-
 
     }
 
