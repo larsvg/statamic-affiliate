@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Larsvg\StatamicAffiliate\Collections\AffiliateCollection;
 use Larsvg\StatamicAffiliate\Collections\AfilliateItem;
+use Larsvg\StatamicAffiliate\Events\FeedImported;
 use Statamic\Entries\Entry;
 use Statamic\Facades\Taxonomy;
 use Statamic\Facades\Term;
@@ -31,6 +32,8 @@ abstract class StatamicAffiliateCommand extends Command
 
     public function handle(): int
     {
+
+
         $this->feedName = $this->setFeedName();
         $this->comment('Importing ' . $this->feedName . ' affiliate data');
 
@@ -39,6 +42,8 @@ abstract class StatamicAffiliateCommand extends Command
         $this->cleanupItemsNotInFeed();
 
         $this->comment(count($this->updated) . ' updated, '. count($this->deleted) . ' deleted, '. count($this->created) . ' created');
+
+        event(new FeedImported($this->created, $this->updated, $this->deleted));
 
         return self::SUCCESS;
     }
