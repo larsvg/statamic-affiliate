@@ -79,11 +79,8 @@ abstract class StatamicAffiliateCommand extends Command
 
             $entry->save();
 
-
             if ($new) {
-                Log::channel('affiliate')->info('Product ' . $item->productName . ' imported.');
-            } else {
-                Log::channel('affiliate')->info('Product ' . $item->productName . ' edited.');
+                Log::channel('affiliate')->info('Product added: ' . $item->productName . '. Url: ' . config('app.url') . '/cp/collections/products/entries/' . $entry->id);
             }
         }
     }
