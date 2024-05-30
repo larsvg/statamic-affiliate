@@ -16,14 +16,12 @@ class ServiceProvider extends AddonServiceProvider
             $command->call('affiliate:publish-stubs');
         });
 
-        //https://statamic.dev/collections#using-fields-from-related-entries
-        Collection::computed('products', 'category_url', function ($entry, $value) {
-            return $entry->belongs_to?->url();
-        });
+
     }
 
     public function boot()
     {
+        dump('in app package');
 
         if ($this->app->runningInConsole()) {
             $this->commands([
