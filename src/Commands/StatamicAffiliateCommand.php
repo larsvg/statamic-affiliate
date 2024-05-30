@@ -3,7 +3,9 @@
 namespace Larsvg\StatamicAffiliate\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Larsvg\StatamicAffiliate\Collections\AffiliateCollection;
 use Larsvg\StatamicAffiliate\Collections\AfilliateItem;
@@ -25,12 +27,12 @@ abstract class StatamicAffiliateCommand extends Command
     public function handle(): int
     {
         $this->feedName = $this->setFeedName();
-        $this->comment('Importing '.$this->feedName.' affiliate data');
+        $this->comment('Importing ' . $this->feedName . ' affiliate data');
 
         $this->affiliateCollection = $this->CollectAffiliateItems();
         $this->importFeed();
         $itemsRemoved = $this->cleanupItemsNotInFeed();
-        $this->comment($this->affiliateCollection->count().' items imported, '.$itemsRemoved.' items removed');
+        $this->comment($this->affiliateCollection->count() . ' items imported, ' . $itemsRemoved . ' items removed');
 
         return self::SUCCESS;
     }
@@ -38,6 +40,7 @@ abstract class StatamicAffiliateCommand extends Command
     protected function importFeed(): void
     {
         foreach ($this->affiliateCollection as $item) {
+            $new   = false;
             $entry = Entry::query()
                 ->where('collection', 'products')
                 ->where('product_id', $item->productId)
@@ -49,6 +52,8 @@ abstract class StatamicAffiliateCommand extends Command
                 $entry->collection('products');
                 $entry->set('product_id', $item->productId);
                 $entry->set('merchant_id', $item->merchantId);
+
+                $new = true;
             }
 
             $image = $this->uploadImage($item);
@@ -68,11 +73,18 @@ abstract class StatamicAffiliateCommand extends Command
                 'src' => str_replace('images/', '', $image),
             ]);
 
-            if (! empty($item->mechantTaxonomy)) {
+            if (!empty($item->mechantTaxonomy)) {
                 $entry->set('merchants', $item->mechantTaxonomy->slug);
             }
 
             $entry->save();
+
+
+            if ($new) {
+                Log::channel('affiliate')->info('Product ' . $item->productName . ' imported.');
+            } else {
+                Log::channel('affiliate')->info('Product ' . $item->productName . ' edited.');
+            }
         }
     }
 
@@ -93,14 +105,14 @@ abstract class StatamicAffiliateCommand extends Command
 
     protected function uploadImage(AfilliateItem $item): string
     {
-        $directory = 'images/affiliate/'.$this->feedName;
-        $file = $directory.'/'.$item->productId.'.jpg';
+        $directory = 'images/affiliate/' . $this->feedName;
+        $file      = $directory . '/' . $item->productId . '.jpg';
 
         if (File::exists(public_path($file))) {
             return $file;
         }
 
-        if (! File::isDirectory(public_path($directory))) {
+        if (!File::isDirectory(public_path($directory))) {
             File::makeDirectory(public_path($directory), 0755, true, true);
         }
 
@@ -138,4 +150,5 @@ abstract class StatamicAffiliateCommand extends Command
 
         return $merchant;
     }
+
 }
