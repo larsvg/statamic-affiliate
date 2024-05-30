@@ -19,10 +19,7 @@ class ServiceProvider extends AddonServiceProvider
 
     public function boot()
     {
-        //https://statamic.dev/collections#using-fields-from-related-entries
-        Collection::computed('products', 'category_url', function ($entry, $value) {
-            return $entry->belongs_to?->url();
-        });
+
 
         if ($this->app->runningInConsole()) {
             $this->commands([
