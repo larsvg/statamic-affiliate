@@ -18,6 +18,7 @@ class PublishAffiliateStubs extends Command
         File::makeDirectory(resource_path('blueprints/taxonomies/merchants'), 0755, true, true);
         File::makeDirectory(resource_path('views/categories'), 0755, true, true);
         File::makeDirectory(resource_path('views/products'), 0755, true, true);
+        File::makeDirectory(resource_path('views/navigation'), 0755, true, true);
 
         $this->publishFieldsets();
         $this->publishBlueprints();
@@ -47,6 +48,7 @@ class PublishAffiliateStubs extends Command
         $views = [
             'categories/show.antlers.html',
             'products/show.antlers.html',
+            'products/navigation/_breadcrumbs.antlers.html',
         ];
 
         foreach ($views as $view) {
