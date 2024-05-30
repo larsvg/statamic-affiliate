@@ -2,11 +2,12 @@ title: Products
 template: products/show
 layout: layout
 revisions: false
-route: 'product/{slug}'
+route: '{category_url}/{slug}'
 sort_dir: asc
 preview_targets:
   -
     label: Entry
     url: '{permalink}'
+    refresh: true
 structure:
   root: false
