@@ -258,8 +258,29 @@ tabs:
             field:
               type: entries
               collections:
-                - products
+                - categories
               max_items: 1
               listable: false
               localizable: true
+              instructions_position: above
+              visibility: hidden
+              replicator_preview: true
+              mode: default
+              create: true
+              hide_display: false
+          -
+            handle: belongs_to
+            field:
+              max_items: 1
+              mode: default
+              create: true
+              collections:
+                - categories
+              type: entries
+              display: 'Belongs to'
+              listable: hidden
+              instructions_position: above
+              visibility: visible
+              replicator_preview: true
+              hide_display: false
 title: Product
