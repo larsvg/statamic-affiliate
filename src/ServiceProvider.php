@@ -14,6 +14,11 @@ class ServiceProvider extends AddonServiceProvider
         Statamic::afterInstalled(function ($command) {
             $command->call('affiliate:publish-stubs');
         });
+
+        //https://statamic.dev/collections#using-fields-from-related-entries
+        Collection::computed('products', 'category_url', function ($entry, $value) {
+            return $entry->belongs_to?->url();
+        });
     }
 
     public function boot()
