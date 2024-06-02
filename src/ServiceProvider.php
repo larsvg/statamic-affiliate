@@ -11,8 +11,6 @@ use Statamic\Statamic;
 
 class ServiceProvider extends AddonServiceProvider
 {
-
-
     public function bootAddon()
     {
         Statamic::afterInstalled(function ($command) {
@@ -37,7 +35,7 @@ class ServiceProvider extends AddonServiceProvider
         $events = [
             FeedImported::class => [
                 LogNewFeedItems::class,
-            ]
+            ],
         ];
 
         foreach ($events as $event => $listeners) {
@@ -46,5 +44,4 @@ class ServiceProvider extends AddonServiceProvider
             }
         }
     }
-
 }
