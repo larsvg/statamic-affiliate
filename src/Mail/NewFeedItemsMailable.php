@@ -26,7 +26,7 @@ class NewFeedItemsMailable extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'New Feed Items Mailable',
+            subject: 'New Feed Items',
         );
     }
 
@@ -36,7 +36,7 @@ class NewFeedItemsMailable extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'affiliate::mail.new-feed-items',
         );
     }
 
