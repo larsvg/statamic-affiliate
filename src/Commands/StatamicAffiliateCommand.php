@@ -123,14 +123,14 @@ abstract class StatamicAffiliateCommand extends Command
     {
         try {
 
-            $directory = 'images/affiliate/' . $this->feedName;
-            $file      = $directory . '/' . $item->productId . '.jpg';
+            $directory = 'images/affiliate/'.$this->feedName;
+            $file = $directory.'/'.$item->productId.'.jpg';
 
             if (File::exists(public_path($file))) {
                 return $file;
             }
 
-            if (!File::isDirectory(public_path($directory))) {
+            if (! File::isDirectory(public_path($directory))) {
                 File::makeDirectory(public_path($directory), 0755, true, true);
             }
 
