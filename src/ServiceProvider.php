@@ -12,6 +12,8 @@ use Statamic\Statamic;
 
 class ServiceProvider extends AddonServiceProvider
 {
+    protected $viewNamespace = 'statamic-affiliate';
+
     public function bootAddon()
     {
         Statamic::afterInstalled(function ($command) {
