@@ -67,6 +67,10 @@ abstract class StatamicAffiliateCommand extends Command
 
             $image = $this->uploadImage($item);
 
+            if (empty($image)) {
+                continue;
+            }
+
             $entry->slug(Str::slug($item->productName));
             $entry->set('affiliate_link', $item->afilliateLink);
             $entry->set('batch_id', $this->affiliateCollection->batchId);
@@ -115,25 +119,30 @@ abstract class StatamicAffiliateCommand extends Command
         return $entries->count();
     }
 
-    protected function uploadImage(AfilliateItem $item): string
+    protected function uploadImage(AfilliateItem $item): ?string
     {
-        $directory = 'images/affiliate/'.$this->feedName;
-        $file = $directory.'/'.$item->productId.'.jpg';
+        try {
 
-        if (File::exists(public_path($file))) {
+            $directory = 'images/affiliate/' . $this->feedName;
+            $file      = $directory . '/' . $item->productId . '.jpg';
+
+            if (File::exists(public_path($file))) {
+                return $file;
+            }
+
+            if (!File::isDirectory(public_path($directory))) {
+                File::makeDirectory(public_path($directory), 0755, true, true);
+            }
+
+            File::put(
+                public_path($file),
+                file_get_contents($item->image)
+            );
+
             return $file;
+        } catch (\Exception $e) {
+            return null;
         }
-
-        if (! File::isDirectory(public_path($directory))) {
-            File::makeDirectory(public_path($directory), 0755, true, true);
-        }
-
-        File::put(
-            public_path($file),
-            file_get_contents($item->image)
-        );
-
-        return $file;
     }
 
     protected function merchantTaxonomy(string $merchantName): ?LocalizedTerm
