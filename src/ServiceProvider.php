@@ -38,7 +38,7 @@ class ServiceProvider extends AddonServiceProvider
         $events = [
             FeedImported::class => [
                 LogNewFeedItems::class,
-                MailNewFeedItems::class,
+                //MailNewFeedItems::class,
             ],
         ];
 
