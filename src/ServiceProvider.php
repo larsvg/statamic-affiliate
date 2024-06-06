@@ -6,6 +6,7 @@ use Larsvg\StatamicAffiliate\Commands\MakeImporter;
 use Larsvg\StatamicAffiliate\Commands\PublishAffiliateStubs;
 use Larsvg\StatamicAffiliate\Events\FeedImported;
 use Larsvg\StatamicAffiliate\Listeners\LogNewFeedItems;
+use Larsvg\StatamicAffiliate\Listeners\MailNewFeedItems;
 use Statamic\Providers\AddonServiceProvider;
 use Statamic\Statamic;
 
@@ -35,6 +36,7 @@ class ServiceProvider extends AddonServiceProvider
         $events = [
             FeedImported::class => [
                 LogNewFeedItems::class,
+                MailNewFeedItems::class,
             ],
         ];
 
