@@ -30,5 +30,4 @@ class FeedImported
             new PrivateChannel('channel-name'),
         ];
     }
-
 }

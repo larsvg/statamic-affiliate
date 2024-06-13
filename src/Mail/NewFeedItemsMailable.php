@@ -30,7 +30,7 @@ class NewFeedItemsMailable extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->feedName . ' processed for ' . config('app.name'),
+            subject: $this->feedName.' processed for '.config('app.name'),
         );
     }
 
@@ -58,5 +58,4 @@ class NewFeedItemsMailable extends Mailable
     {
         return [];
     }
-
 }

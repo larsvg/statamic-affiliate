@@ -2,8 +2,6 @@
 
 namespace Larsvg\StatamicAffiliate\Listeners;
 
-use App\Mail\MailsMailable;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Larsvg\StatamicAffiliate\Mail\NewFeedItemsMailable;
 
@@ -29,7 +27,7 @@ class MailFeedItemUpdates
             return;
         }
 
-        if (!$this->hasItemsToReportOn($event)) {
+        if (! $this->hasItemsToReportOn($event)) {
             return;
         }
 
@@ -55,5 +53,4 @@ class MailFeedItemUpdates
 
         return false;
     }
-
 }
