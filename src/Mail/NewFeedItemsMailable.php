@@ -41,6 +41,11 @@ class NewFeedItemsMailable extends Mailable
     {
         return new Content(
             markdown: 'vendor.mail.report',
+            with: [
+                'created' => $this->created,
+                'updated' => $this->updated,
+                'deleted' => $this->deleted,
+            ],
         );
     }
 
