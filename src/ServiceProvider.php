@@ -12,7 +12,7 @@ use Statamic\Statamic;
 
 class ServiceProvider extends AddonServiceProvider
 {
-    protected $viewNamespace = 'statamic-affiliate';
+    protected $viewNamespace = 'affiliate';
 
     public function bootAddon()
     {
