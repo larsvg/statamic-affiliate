@@ -40,7 +40,7 @@ class NewFeedItemsMailable extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'affiliate.report',
+            markdown: 'vendor.mail.report',
         );
     }
 
