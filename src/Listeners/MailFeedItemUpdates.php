@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Larsvg\StatamicAffiliate\Mail\NewFeedItemsMailable;
 
-class MailNewFeedItems
+class MailFeedItemUpdates
 {
     /**
      * Create the event listener.
@@ -26,12 +26,32 @@ class MailNewFeedItems
             return;
         }
 
-        $recipients = config('affiliate.mail_new_feed_items_to');
+        $recipients = config('affiliate.mail_feed_item_updates_to');
         $recipients = explode(',', $recipients);
+
+        if (empty($recipients)) {
+            return;
+        }
+
+        if (!$this->hasItemsToReportOn($event)) {
+            return;
+        }
+
+
 
         Mail::to($recipients)
             ->send(
                 new NewFeedItemsMailable($event->created)
             );
     }
+
+    private function hasItemsToReportOn(): bool
+    {
+
+
+
+
+        return false;
+    }
+
 }
