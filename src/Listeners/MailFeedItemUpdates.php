@@ -37,19 +37,25 @@ class MailFeedItemUpdates
             return;
         }
 
-
-
         Mail::to($recipients)
             ->send(
                 new NewFeedItemsMailable($event->created)
             );
     }
 
-    private function hasItemsToReportOn(): bool
+    private function hasItemsToReportOn(object $event): bool
     {
+        if (!empty($event->created) && config('affiliate.mail_on_new_items')) {
+            return true;
+        }
 
+        if (!empty($event->updated) && config('affiliate.mail_on_updated_item')) {
+            return true;
+        }
 
-
+        if (!empty($event->deleted) && config('affiliate.mail_on_deleted_item')) {
+            return true;
+        }
 
         return false;
     }
