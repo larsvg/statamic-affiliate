@@ -22,10 +22,6 @@ class MailFeedItemUpdates
      */
     public function handle(object $event): void
     {
-        if (empty($event->created)) {
-            return;
-        }
-
         $recipients = config('affiliate.mail_feed_item_updates_to');
         $recipients = explode(',', $recipients);
 
@@ -39,21 +35,21 @@ class MailFeedItemUpdates
 
         Mail::to($recipients)
             ->send(
-                new NewFeedItemsMailable($event->created)
+                new NewFeedItemsMailable($event->feedName, $event->created, $event->updated, $event->deleted)
             );
     }
 
     private function hasItemsToReportOn(object $event): bool
     {
-        if (!empty($event->created) && config('affiliate.mail_on_new_items')) {
+        if (count($event->created) > 0 && config('affiliate.mail_on_new_items')) {
             return true;
         }
 
-        if (!empty($event->updated) && config('affiliate.mail_on_updated_item')) {
+        if (count($event->updated) > 0 && config('affiliate.mail_on_updated_item')) {
             return true;
         }
 
-        if (!empty($event->deleted) && config('affiliate.mail_on_deleted_item')) {
+        if (count($event->deleted) > 0 && config('affiliate.mail_on_deleted_item')) {
             return true;
         }
 

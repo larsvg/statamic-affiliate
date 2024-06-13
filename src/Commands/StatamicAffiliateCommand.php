@@ -41,7 +41,7 @@ abstract class StatamicAffiliateCommand extends Command
 
         $this->comment(count($this->updated).' updated, '.count($this->deleted).' deleted, '.count($this->created).' created');
 
-        event(new FeedImported($this->created, $this->updated, $this->deleted));
+        event(new FeedImported($this->feedName, $this->created, $this->updated, $this->deleted));
 
         return self::SUCCESS;
     }

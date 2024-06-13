@@ -15,8 +15,12 @@ class NewFeedItemsMailable extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public array $created)
-    {
+    public function __construct(
+        public string $feedName,
+        public array $created,
+        public array $updated,
+        public array $deleted
+    ) {
         //
     }
 
@@ -26,7 +30,7 @@ class NewFeedItemsMailable extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'New Feed Items',
+            subject: $this->feedName . ' processed for ' . config('app.name'),
         );
     }
 
@@ -36,7 +40,7 @@ class NewFeedItemsMailable extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'affiliate::mail.new-feed-items',
+            view: 'affiliate.report',
         );
     }
 
@@ -49,4 +53,5 @@ class NewFeedItemsMailable extends Mailable
     {
         return [];
     }
+
 }

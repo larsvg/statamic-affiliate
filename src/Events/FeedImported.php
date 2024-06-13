@@ -14,7 +14,7 @@ class FeedImported
     /**
      * Create a new event instance.
      */
-    public function __construct(public array $created, public array $updated, public array $deleted)
+    public function __construct(public string $feedName, public array $created, public array $updated, public array $deleted)
     {
 
     }
@@ -30,4 +30,5 @@ class FeedImported
             new PrivateChannel('channel-name'),
         ];
     }
+
 }
