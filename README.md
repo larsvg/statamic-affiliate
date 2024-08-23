@@ -19,6 +19,6 @@ php artisan affiliate:publish-stubs
 php artisan affiliate:make:importer
 ```
 
-### Schedule your importer
+### Schedule your feed importer
 
 See Laravel documentation on [Task Scheduling](https://laravel.com/docs/11.x/scheduling).
