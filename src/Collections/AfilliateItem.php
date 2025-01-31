@@ -6,20 +6,18 @@ use Statamic\Taxonomies\LocalizedTerm;
 
 class AfilliateItem
 {
-    protected ?string $productDescriptionAi = null;
-
     public function __construct(
-        protected string $productId,
-        protected string $merchantId,
-        protected ?string $merchantName,
-        protected ?LocalizedTerm $mechantTaxonomy,
-        protected string $afilliateLink,
-        protected string $productName,
-        protected string $productDescription,
-        protected float $price,
-        protected float $deliveryCost,
-        protected string $image,
-        protected int $stock,
+        public string $productId,
+        public string $merchantId,
+        public ?string $merchantName,
+        public ?LocalizedTerm $mechantTaxonomy,
+        public string $afilliateLink,
+        public string $productName,
+        public string $productDescription,
+        public float $price,
+        public float $deliveryCost,
+        public string $image,
+        public int $stock,
     ) {
 
     }

@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Larsvg\StatamicAffiliate\Collections\AffiliateCollection;
 use Larsvg\StatamicAffiliate\Collections\AfilliateItem;
 use Larsvg\StatamicAffiliate\Events\FeedImported;
+use OpenAI\Laravel\Facades\OpenAI;
 use Statamic\Entries\Entry;
 use Statamic\Facades\Taxonomy;
 use Statamic\Facades\Term;
@@ -29,17 +30,19 @@ abstract class StatamicAffiliateCommand extends Command
 
     private array $deleted = [];
 
+    private int $aiEnhancedItems = 0;
+
     public function handle(): int
     {
 
         $this->feedName = $this->setFeedName();
-        $this->comment('Importing '.$this->feedName.' affiliate data');
+        $this->comment('Importing ' . $this->feedName . ' affiliate data');
 
         $this->affiliateCollection = $this->CollectAffiliateItems();
         $this->importFeed();
         $this->cleanupItemsNotInFeed();
 
-        $this->comment(count($this->updated).' updated, '.count($this->deleted).' deleted, '.count($this->created).' created');
+        $this->comment(count($this->updated) . ' updated, ' . count($this->deleted) . ' deleted, ' . count($this->created) . ' created');
 
         event(new FeedImported($this->feedName, $this->created, $this->updated, $this->deleted));
 
@@ -49,7 +52,7 @@ abstract class StatamicAffiliateCommand extends Command
     protected function importFeed(): void
     {
         foreach ($this->affiliateCollection as $item) {
-            $new = false;
+            $new   = false;
             $entry = Entry::query()
                 ->where('collection', 'products')
                 ->where('product_id', $item->productId)
@@ -85,11 +88,17 @@ abstract class StatamicAffiliateCommand extends Command
                 'src' => str_replace('images/', '', $image),
             ]);
 
-            if (! empty($item->merchantName)) {
+            if ($productDescriptionAi = $this->generateProductDescriptionAi($item, $entry)) {
+                $entry->set('product_description_ai', $productDescriptionAi);
+            }
+
+            dd($entry);
+
+            if (!empty($item->merchantName)) {
                 $entry->set('merchant_name', $item->merchantName);
             }
 
-            if (! empty($item->mechantTaxonomy)) {
+            if (!empty($item->mechantTaxonomy)) {
                 $entry->set('merchants', $item->mechantTaxonomy->slug);
             }
 
@@ -122,15 +131,14 @@ abstract class StatamicAffiliateCommand extends Command
     protected function uploadImage(AfilliateItem $item): ?string
     {
         try {
-
-            $directory = 'images/affiliate/'.$this->feedName;
-            $file = $directory.'/'.$item->productId.'.jpg';
+            $directory = 'images/affiliate/' . $this->feedName;
+            $file      = $directory . '/' . $item->productId . '.jpg';
 
             if (File::exists(public_path($file))) {
                 return $file;
             }
 
-            if (! File::isDirectory(public_path($directory))) {
+            if (!File::isDirectory(public_path($directory))) {
                 File::makeDirectory(public_path($directory), 0755, true, true);
             }
 
@@ -171,4 +179,37 @@ abstract class StatamicAffiliateCommand extends Command
 
         return $merchant;
     }
+
+    protected function generateProductDescriptionAi(AfilliateItem $item, Entry $entry): ?string
+    {
+        if (!config('affiliate.enhance_with_ai')) {
+            return null;
+        }
+
+        if (!empty($entry->get('product_description_ai'))) {
+            return null;
+        }
+
+        if ($this->aiEnhancedItems > config('affiliate.max_ai_enhanced_items_per_batch')) {
+            return null;
+        }
+
+        $this->aiEnhancedItems++;
+
+        //dd($item->productDescription, $entry);
+
+        return 'blabla';
+
+//        $result = OpenAI::chat()->create([
+//            'model' => 'gpt-3.5-turbo',
+//            'messages' => [
+//                ['role' => 'user', 'content' => 'Hello!'],
+//            ],
+//        ]);
+//
+//        dd($result);
+//
+//        $entry->set('product_description_ai', $item->productDescriptionAi);
+    }
+
 }
