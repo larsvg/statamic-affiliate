@@ -6,6 +6,8 @@ use Statamic\Taxonomies\LocalizedTerm;
 
 class AfilliateItem
 {
+    protected ?string $productDescriptionAi = null;
+
     public function __construct(
         protected string $productId,
         protected string $merchantId,

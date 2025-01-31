@@ -7,29 +7,17 @@ tabs:
           -
             handle: product_id
             field:
-              input_type: text
-              antlers: false
               type: text
               display: 'Product ID'
               width: 50
-              listable: hidden
-              instructions_position: above
               visibility: read_only
-              replicator_preview: true
-              hide_display: false
           -
             handle: merchant_id
             field:
-              input_type: text
-              antlers: false
               type: text
               display: 'Merchant ID'
               width: 50
-              listable: hidden
-              instructions_position: above
               visibility: read_only
-              replicator_preview: true
-              hide_display: false
           -
             handle: title
             field:
@@ -38,210 +26,97 @@ tabs:
               validate:
                 - required
               display: 'Product name'
-              instructions_position: above
-              listable: hidden
               visibility: read_only
-              replicator_preview: true
-              input_type: text
-              antlers: false
-              hide_display: false
           -
             handle: product_description
             field:
-              automatic_line_breaks: true
-              automatic_links: false
-              escape_markup: false
-              smartypants: false
-              restrict: false
-              antlers: false
               type: markdown
               display: 'Product description'
-              listable: hidden
-              instructions_position: above
               visibility: read_only
-              hide_display: false
-              replicator_preview: true
-              buttons:
-                - bold
-                - italic
-                - unorderedlist
-                - orderedlist
-                - quote
-                - link
-                - image
-                - table
-              heading_anchors: false
-              table_of_contents: false
+          -
+            handle: product_description_ai
+            field:
+              type: markdown
+              display: 'Product description AI'
           -
             handle: product_description_manual
             field:
-              restrict: false
-              buttons:
-                - bold
-                - italic
-                - unorderedlist
-                - orderedlist
-                - quote
-                - link
-                - image
-                - table
-              automatic_line_breaks: true
-              automatic_links: false
-              escape_markup: false
-              heading_anchors: false
-              smartypants: false
-              table_of_contents: false
-              antlers: false
               type: markdown
               display: 'Product description manual'
-              listable: hidden
-              instructions_position: above
-              visibility: visible
-              replicator_preview: true
-              hide_display: false
           -
             handle: merchant_name
             field:
-              input_type: text
-              antlers: false
               type: text
               display: 'Merchant name'
-              listable: hidden
-              instructions_position: above
               visibility: read_only
-              replicator_preview: true
-              hide_display: false
           -
             handle: affiliate_link
             field:
-              input_type: text
-              antlers: false
               type: text
               display: 'Affiliate link'
-              listable: hidden
-              instructions_position: above
               visibility: read_only
-              replicator_preview: true
-              hide_display: false
           -
             handle: price
             field:
               type: float
               display: price
-              listable: hidden
-              instructions_position: above
               visibility: read_only
-              replicator_preview: true
-              hide_display: false
               width: 50
           -
             handle: delivery_cost
             field:
               type: float
               display: 'Delivery cost'
-              listable: hidden
-              instructions_position: above
               visibility: read_only
-              replicator_preview: true
-              hide_display: false
               width: 50
           -
             handle: image
             field:
-              input_type: text
-              antlers: false
               type: text
               display: Image
-              listable: hidden
-              instructions_position: above
               visibility: read_only
-              replicator_preview: true
-              hide_display: false
           -
             handle: stock
             field:
               type: integer
               display: Stock
-              listable: hidden
-              instructions_position: above
               visibility: read_only
-              replicator_preview: true
-              hide_display: false
           -
             handle: batch_id
             field:
-              input_type: text
-              antlers: false
               type: text
               display: batch_id
-              listable: hidden
-              instructions_position: above
               visibility: hidden
-              replicator_preview: true
-              hide_display: false
           -
             handle: feed_name
             field:
-              input_type: text
-              antlers: false
               type: text
               display: feed_name
-              listable: hidden
-              instructions_position: above
               visibility: read_only
-              replicator_preview: true
-              hide_display: false
           -
             handle: responsive
             field:
               use_breakpoints: false
               allow_ratio: false
-              allow_fit: true
-              breakpoints:
-                - sm
-                - md
-                - lg
-                - xl
-                - 2xl
-              restrict: false
               allow_uploads: false
               type: responsive
               display: responsive
-              listable: hidden
-              instructions_position: above
-              visibility: visible
-              replicator_preview: true
-              hide_display: false
               container: images
           -
             handle: category
             field:
-              mode: default
-              create: true
               collections:
                 - categories
               type: entries
               display: Category
-              listable: hidden
-              instructions_position: above
-              visibility: visible
-              replicator_preview: true
-              hide_display: false
           -
             handle: merchants
             field:
               max_items: 1
-              mode: default
-              create: true
               taxonomies:
                 - merchants
               type: terms
               display: Merchants
-              listable: hidden
-              instructions_position: above
-              visibility: visible
-              replicator_preview: true
-              hide_display: false
   sidebar:
     display: Sidebar
     sections:
@@ -262,25 +137,21 @@ tabs:
               max_items: 1
               listable: false
               localizable: true
-              instructions_position: above
               visibility: hidden
-              replicator_preview: true
-              mode: default
-              create: true
-              hide_display: false
           -
             handle: belongs_to
             field:
               max_items: 1
-              mode: default
-              create: true
               collections:
                 - categories
               type: entries
               display: 'Belongs to'
-              listable: hidden
-              instructions_position: above
-              visibility: visible
-              replicator_preview: true
-              hide_display: false
+          -
+            handle: categories
+            field:
+              type: terms
+              taxonomies:
+                - categories
+              display: Categorieen
+              mode: select
 title: Product
