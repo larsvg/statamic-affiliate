@@ -1,72 +1,50 @@
-{{ partial:navigation/breadcrumbs }}
-
 <div class="fluid-container my-16 flex flex-col gap-4">
 
     <div class="flex items-center gap-8">
-        <div class="w-1/3">
-            {{ responsive:responsive class="w-full" }}
+        <div class="w-1/3 flex justify-center">
+
+            <img src="{{ image }}" class="w-100" alt="{{ title }}" />
+
         </div>
 
         <div class="w-2/3 flex flex-col gap-6">
-            {{ partial:typography/h2 :content="title" }}
+            {{ partial:typography/h1 :content="title" }}
 
 
             <div class="border-y border-gray-300 py-6">
-                {{ if (product_description_manual > '') }}
+                {{ if (product_description_ai > '') }}
+                    {{ product_description_ai | nl2br }}
+                {{ elseif (product_description_manual > '') }}
                     {{ product_description_manual }}
                 {{ else }}
                    {{ product_description }}
                 {{ /if }}
             </div>
 
-
-            <div class="flex justify-between gap-6">
+            <div class="flex justify-between items-center gap-6">
                 <span class="text-green-600 text-xl">
                     &euro; {{ price }}
                 </span>
 
                 <a href="{{ affiliate_link }}" class="font-bold underline decoration-2 focus:outline-none focus-visible:ring focus-visible:ring-offset-2 inline-flex items-center py-3 px-4 rounded leading-none no-underline select-none whitespace-nowrap motion-safe:transition bg-primary text-white focus-visible:ring-primary" >
-                    Bestellen
+                    Bestellen via {{ merchant_name }}
                 </a>
             </div>
+
+            {{ if (category) }}
+                <div class="border-y border-gray-300 py-6">
+                    <b>Te vinden in de volgende categorieën:</b>
+                    <ul class="list-disc ml-4">
+                        {{ category }}
+                        <li>
+                            <a href="{{ url }}" class="transition-all hover:text-primary">{{ title }}</a>
+                        </li>
+                        {{ /category }}
+                    </ul>
+                </div>
+            {{ /if }}
 
         </div>
     </div>
 
-
-    <ul>
-        <li>
-            Product ID: {{ product_id}}
-        </li>
-        <li>
-            Merchant ID: {{ merchant_id }}
-        </li>
-        <li>
-            Merchant name: {{ merchant_name }}
-        </li>
-        <li>
-            Product name: {{ title }}
-        </li>
-        <li>
-            Product description: {{ product_description }}
-        </li>
-        <li>
-            Afilliate link: {{ affiliate_link }}
-        </li>
-        <li>
-            Price: {{ price }}
-        </li>
-        <li>
-            Delivery cost: {{ delivery_cost }}
-        </li>
-        <li>
-            Image: {{ image }}
-        </li>
-        <li>
-            Batch ID: {{ batch_id }}
-        </li>
-        <li>
-            Feed name: {{ feed_name }}
-        </li>
-    </ul>
 </div>
