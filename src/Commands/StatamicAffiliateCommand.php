@@ -88,11 +88,12 @@ abstract class StatamicAffiliateCommand extends Command
                 'src' => str_replace('images/', '', $image),
             ]);
 
-            if ($productDescriptionAi = $this->generateProductDescriptionAi($item, $entry)) {
-                $entry->set('product_description_ai', $productDescriptionAi);
-            }
+            $productDescriptionAi = $this->generateProductDescriptionAi($item, $entry);
 
-            dd($entry);
+            if ($productDescriptionAi > '') {
+                $entry->set('product_description_ai', $productDescriptionAi);
+                $entry->set('regenerate_ai_description', false);
+            }
 
             if (!empty($item->merchantName)) {
                 $entry->set('merchant_name', $item->merchantName);
@@ -103,6 +104,10 @@ abstract class StatamicAffiliateCommand extends Command
             }
 
             $entry->save();
+
+            if ($productDescriptionAi > '') {
+                dd('Finished: ' . $item->productName);
+            }
 
             if ($new) {
                 $this->created[] = $entry;
@@ -185,31 +190,54 @@ abstract class StatamicAffiliateCommand extends Command
         if (!config('affiliate.enhance_with_ai')) {
             return null;
         }
-
-        if (!empty($entry->get('product_description_ai'))) {
+        if ($this->aiEnhancedItems > config('affiliate.max_ai_enhanced_items_per_batch')) {
             return null;
         }
-
-        if ($this->aiEnhancedItems > config('affiliate.max_ai_enhanced_items_per_batch')) {
+        if ($entry->get('regenerate_ai_description') === false) {
             return null;
         }
 
         $this->aiEnhancedItems++;
 
-        //dd($item->productDescription, $entry);
+        $prompt = config('affiliate.ai_prompt');
+        $prompt = str_replace('{productName}', $item->productName, $prompt);
+        $prompt = str_replace('{productDescription}', $item->productDescription, $prompt);
+        //$prompt = config('affiliate.ai_prompt_with_categories');
 
-        return 'blabla';
+        $result = OpenAI::chat()->create([
+            'model' => 'gpt-4o-mini',
+            'messages' => [
+                ['role' => 'user', 'content' => $prompt],
+            ],
+        ]);
 
-//        $result = OpenAI::chat()->create([
-//            'model' => 'gpt-3.5-turbo',
-//            'messages' => [
-//                ['role' => 'user', 'content' => 'Hello!'],
-//            ],
-//        ]);
-//
-//        dd($result);
-//
-//        $entry->set('product_description_ai', $item->productDescriptionAi);
+        $description = (string) $result?->choices[0]?->message?->content;
+        $description = str_replace('```', '', $description);
+        $description = str_replace("markdown\n", '', $description);
+
+        if(empty($description)) {
+            $this->error('Could not generate AI description for ' . $item->productName);
+            return null;
+        }
+
+        return $description;
+
+        /*
+        $this->info('AI generated: ' . $description);
+
+        if (preg_match('/^### (.+)$/m', $description, $matches)) {
+            $title       = $matches[1];
+            $description = preg_replace('/^### .+(\r?\n)?/m', '', $result);
+            $description = trim($description);
+        }
+
+        dd($title, $description);
+
+        return [
+            'title' => $title,
+            'description' => $description,
+        ];
+        */
     }
 
 }
