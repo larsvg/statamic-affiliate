@@ -17,8 +17,7 @@
     ],
     "require": {
         "php": "^8.1",
-        "laravel/framework": "^10.3|^11.3",
-        "studio1902/statamic-peak": "^6.0"
+        "laravel/framework": "^10.3|^11.3"
     },
     "require-dev": {
         "laravel/pint": "^1.0",

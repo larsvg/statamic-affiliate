@@ -53,12 +53,17 @@ abstract class StatamicAffiliateCommand extends Command
     {
         foreach ($this->affiliateCollection as $item) {
             $new   = false;
-            $entry = Entry::query()
-                ->where('collection', 'products')
-                ->where('product_id', $item->productId)
-                ->where('merchant_id', $item->merchantId)
-                ->first();
+            try {
+                $entry = Entry::query()
+                    ->where('collection', 'products')
+                    ->where('product_id', $item->productId)
+                    ->where('merchant_id', $item->merchantId)
+                    ->first();
 
+            } catch (\Exception $e) {
+                $this->error('Error on ' . $item->productName . ': ' . $e->getMessage());
+                continue;
+            }
             if (empty($entry)) {
                 $entry = new Entry();
                 $entry->collection('products');
@@ -93,6 +98,8 @@ abstract class StatamicAffiliateCommand extends Command
             if ($productDescriptionAi > '') {
                 $entry->set('product_description_ai', $productDescriptionAi);
                 $entry->set('regenerate_ai_description', false);
+
+                $this->warn('AI enhanced description for ' . $item->productName . ' with ' . $productDescriptionAi);
             }
 
             if (!empty($item->merchantName)) {
@@ -104,10 +111,6 @@ abstract class StatamicAffiliateCommand extends Command
             }
 
             $entry->save();
-
-            if ($productDescriptionAi > '') {
-                dd('Finished: ' . $item->productName);
-            }
 
             if ($new) {
                 $this->created[] = $entry;
@@ -190,6 +193,9 @@ abstract class StatamicAffiliateCommand extends Command
         if (!config('affiliate.enhance_with_ai')) {
             return null;
         }
+        if (empty($entry->get('category'))) {
+            return null;
+        }
         if ($this->aiEnhancedItems > config('affiliate.max_ai_enhanced_items_per_batch')) {
             return null;
         }
@@ -199,10 +205,11 @@ abstract class StatamicAffiliateCommand extends Command
 
         $this->aiEnhancedItems++;
 
-        $prompt = config('affiliate.ai_prompt');
-        $prompt = str_replace('{productName}', $item->productName, $prompt);
-        $prompt = str_replace('{productDescription}', $item->productDescription, $prompt);
-        //$prompt = config('affiliate.ai_prompt_with_categories');
+        if (empty($entry->get('category'))) {
+            $prompt = $this->promptWithoutCategories($item, $entry);
+        } else {
+            $prompt = $this->promptWithCategories($item, $entry);
+        }
 
         $result = OpenAI::chat()->create([
             'model' => 'gpt-4o-mini',
@@ -221,23 +228,45 @@ abstract class StatamicAffiliateCommand extends Command
         }
 
         return $description;
+    }
 
-        /*
-        $this->info('AI generated: ' . $description);
+    private function promptWithoutCategories(AfilliateItem $item, Entry $entry): string
+    {
+        $prompt = config('affiliate.ai_prompt');
+        $prompt = str_replace('{productName}', $item->productName, $prompt);
+        $prompt = str_replace('{productDescription}', $item->productDescription, $prompt);
 
-        if (preg_match('/^### (.+)$/m', $description, $matches)) {
-            $title       = $matches[1];
-            $description = preg_replace('/^### .+(\r?\n)?/m', '', $result);
-            $description = trim($description);
+        return $prompt;
+    }
+
+    private function promptWithCategories(AfilliateItem $item, Entry $entry): string
+    {
+        $categoryIds  = $entry->get('category');
+        $baseUrl      = config('app.url');
+        $categoryUrls = collect($categoryIds)->map(function ($id) use ($baseUrl) {
+            $categoryEntry = Entry::find($id);
+
+            if (empty($categoryEntry)) {
+                return null;
+            }
+
+            if ($categoryEntry->published() === false) {
+                return null;
+            }
+
+            return $baseUrl .  $categoryEntry->url();
+        })->filter()->toArray();
+
+        if(empty($categoryUrls)) {
+            return $this->promptWithoutCategories($item, $entry);
         }
 
-        dd($title, $description);
+        $prompt = config('affiliate.ai_prompt_with_categories');
+        $prompt = str_replace('{productName}', $item->productName, $prompt);
+        $prompt = str_replace('{productDescription}', $item->productDescription, $prompt);
+        $prompt = str_replace('{categories}', implode(', ', $categoryUrls), $prompt);
 
-        return [
-            'title' => $title,
-            'description' => $description,
-        ];
-        */
+        return $prompt;
     }
 
 }
