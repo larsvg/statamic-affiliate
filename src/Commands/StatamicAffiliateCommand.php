@@ -211,8 +211,6 @@ abstract class StatamicAffiliateCommand extends Command
             $prompt = $this->promptWithCategories($item, $entry);
         }
 
-        dd($prompt);
-
         $result = OpenAI::chat()->create([
             'model' => 'gpt-4o-mini',
             'messages' => [
