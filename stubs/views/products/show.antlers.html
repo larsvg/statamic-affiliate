@@ -27,7 +27,7 @@
                 </span>
 
                 <a href="{{ affiliate_link }}" class="font-bold underline decoration-2 focus:outline-none focus-visible:ring focus-visible:ring-offset-2 inline-flex items-center py-3 px-4 rounded leading-none no-underline select-none whitespace-nowrap motion-safe:transition bg-primary text-white focus-visible:ring-primary" >
-                    Bestellen via {{ merchant_name }}
+                    Bestellen via {{ merchants:merchant_name ?? merchant_name }}
                 </a>
             </div>
 
@@ -45,6 +45,40 @@
             {{ /if }}
 
         </div>
+    </div>
+
+    <div>
+        <ul>
+            {{ if (merchants:merchant_name > '') }}
+                <li>
+                    {{ merchants:merchant_name }}
+                </li>
+            {{ /if }}
+            {{ if (merchants:logo > '') }}
+                <li>
+                    <img src="{{ merchants:logo }}" alt="{{ merchants:merchant_name }}" class="w-20" />
+                </li>
+            {{ /if }}
+            {{ if (merchants:usp_article) }}
+                <li>
+                    {{ partial:typography/prose as="article" class="contents" }}
+                        {{ merchants:usp_article }}
+                            <div class="size-md">
+                                {{ partial src="components/{type}" }}
+                            </div>
+                        {{ /merchants:usp_article }}
+                    {{ /partial:typography/prose }}
+                </li>
+            {{ /if }}
+            {{ if (merchants:payment_methods) }}
+                <li>
+                    {{ merchants:payment_methods }}
+                        {{ name_payment_provider }}
+                        <img src="{{ payment_logo }}" class="w-16" />
+                    {{ /merchants:payment_methods }}
+                </li>
+            {{ /if }}
+        </ul>
     </div>
 
 </div>

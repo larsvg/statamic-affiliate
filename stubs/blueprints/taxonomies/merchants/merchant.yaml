@@ -12,32 +12,48 @@ tabs:
               validate:
                 - required
           -
-            handle: content
+            handle: merchant_name
             field:
-              type: markdown
-              localizable: true
-              instructions_position: above
-              listable: hidden
-              visibility: visible
-              replicator_preview: true
-              restrict: false
-              buttons:
-                - bold
-                - italic
-                - unorderedlist
-                - orderedlist
-                - quote
-                - link
-                - image
-                - table
-              automatic_line_breaks: true
-              automatic_links: false
-              escape_markup: false
-              heading_anchors: false
-              smartypants: false
-              table_of_contents: false
-              antlers: false
-              hide_display: false
+              type: text
+              display: 'Merchant name'
+          -
+            handle: logo
+            field:
+              container: images
+              type: assets
+              display: Logo
+              max_files: 1
+          -
+            import: article
+            prefix: usp_
+          -
+            handle: payment_methods
+            field:
+              type: replicator
+              display: 'Payment methods'
+              sets:
+                nieuwe_set_groep:
+                  display: 'Nieuwe Set Groep'
+                  sets:
+                    payment_methods:
+                      display: 'Payment methods'
+                      fields:
+                        -
+                          handle: name_payment_provider
+                          field:
+                            type: text
+                            display: 'Name payment provider'
+                            validate:
+                              - required
+                        -
+                          handle: payment_logo
+                          field:
+                            container: images
+                            type: assets
+                            display: 'Payment logo'
+                            validate:
+                              - required
+                            max_files: 1
   sidebar:
     display: Sidebar
     sections:
