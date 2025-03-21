@@ -32,8 +32,20 @@ abstract class StatamicAffiliateCommand extends Command
 
     private int $aiEnhancedItems = 0;
 
+    private array $availableCategories = [];
+
     public function handle(): int
     {
+        $this->availableCategories = Entry::query()
+            ->where('collection', 'categories')
+            ->get()
+            ->map(function ($entry) {;
+                return [
+                    'id' => $entry->id(),
+                    'title' => $entry->title,
+                ];
+            })
+            ->toArray();
 
         $this->feedName = $this->setFeedName();
         $this->comment('Importing ' . $this->feedName . ' affiliate data');
@@ -76,6 +88,7 @@ abstract class StatamicAffiliateCommand extends Command
             $image = $this->uploadImage($item);
 
             if (empty($image)) {
+                $this->info('Error on image for ' . $item->productName );
                 continue;
             }
 
@@ -93,13 +106,11 @@ abstract class StatamicAffiliateCommand extends Command
                 'src' => str_replace('images/', '', $image),
             ]);
 
-            $productDescriptionAi = $this->generateProductDescriptionAi($item, $entry);
+            $aiEnhanced = $this->enhancePropertiesWithAi($item, $entry);
 
-            if ($productDescriptionAi > '') {
-                $entry->set('product_description_ai', $productDescriptionAi);
-                $entry->set('regenerate_ai_description', false);
-
-                $this->warn('AI enhanced description for ' . $item->productName . ' with ' . $productDescriptionAi);
+            if (!empty($aiEnhanced)) {
+                $entry->set('product_description_ai', $aiEnhanced['productDescription']);
+                $entry->set('regenerate_ai', false);
             }
 
             if (!empty($item->merchantName)) {
@@ -188,29 +199,45 @@ abstract class StatamicAffiliateCommand extends Command
         return $merchant;
     }
 
-    protected function generateProductDescriptionAi(AfilliateItem $item, Entry $entry): ?string
+    protected function enhancePropertiesWithAi(AfilliateItem $item, Entry $entry): ?array
     {
         if (!config('affiliate.enhance_with_ai')) {
-            return null;
-        }
-        if (empty($entry->get('category'))) {
+            $this->info('AI enhancement disabled');
             return null;
         }
         if ($this->aiEnhancedItems > config('affiliate.max_ai_enhanced_items_per_batch')) {
+            $this->info('Max AI enhanced items reached');
             return null;
         }
-        if ($entry->get('regenerate_ai_description') === false) {
+        if ($entry->get('regenerate_ai') === false) {
+            $this->info('AI enhancement already done');
             return null;
         }
+
+        $input = [
+            'productName'         => $item->productName,
+            'productDescription'  => $item->productDescription,
+            'availableCategories' => $this->availableCategories,
+        ];
+
+        $output = [
+            'productDescription' => '',
+            'hasWheels'          => false,
+            'hasLid'             => false,
+            'hasDoors'           => false,
+            'loadCapacityInKg'   => 0,
+            'material'           => '',
+            'lengthCm'           => 0,
+            'widthCm'            => 0,
+            'heightCm'           => 0,
+            'color'              => '',
+            'categories'         => [],
+        ];
 
         $this->aiEnhancedItems++;
-
-        if (empty($entry->get('category'))) {
-            $prompt = $this->promptWithoutCategories($item, $entry);
-        } else {
-            $prompt = $this->promptWithCategories($item, $entry);
-        }
-
+        $prompt = config('affiliate.ai_prompt');
+        $prompt = str_replace('{input}', json_encode($input), $prompt);
+        $prompt = str_replace('{output}', json_encode($output), $prompt);
         $result = OpenAI::chat()->create([
             'model' => 'gpt-4o-mini',
             'messages' => [
@@ -218,55 +245,13 @@ abstract class StatamicAffiliateCommand extends Command
             ],
         ]);
 
-        $description = (string) $result?->choices[0]?->message?->content;
-        $description = str_replace('```', '', $description);
-        $description = str_replace("markdown\n", '', $description);
-
-        if(empty($description)) {
-            $this->error('Could not generate AI description for ' . $item->productName);
+        try {
+            $json = trim($result?->choices[0]?->message?->content);
+            preg_match('/\{.*\}/s', $json, $matches);
+            return json_decode($matches[0], true);
+        } catch (\Exception $e) {
             return null;
         }
-
-        return $description;
-    }
-
-    private function promptWithoutCategories(AfilliateItem $item, Entry $entry): string
-    {
-        $prompt = config('affiliate.ai_prompt');
-        $prompt = str_replace('{productName}', $item->productName, $prompt);
-        $prompt = str_replace('{productDescription}', $item->productDescription, $prompt);
-
-        return $prompt;
-    }
-
-    private function promptWithCategories(AfilliateItem $item, Entry $entry): string
-    {
-        $categoryIds  = $entry->get('category');
-        $baseUrl      = config('app.url');
-        $categoryUrls = collect($categoryIds)->map(function ($id) use ($baseUrl) {
-            $categoryEntry = Entry::find($id);
-
-            if (empty($categoryEntry)) {
-                return null;
-            }
-
-            if ($categoryEntry->published() === false) {
-                return null;
-            }
-
-            return $baseUrl .  $categoryEntry->url();
-        })->filter()->toArray();
-
-        if(empty($categoryUrls)) {
-            return $this->promptWithoutCategories($item, $entry);
-        }
-
-        $prompt = config('affiliate.ai_prompt_with_categories');
-        $prompt = str_replace('{productName}', $item->productName, $prompt);
-        $prompt = str_replace('{productDescription}', $item->productDescription, $prompt);
-        $prompt = str_replace('{categories}', implode(', ', $categoryUrls), $prompt);
-
-        return $prompt;
     }
 
 }
