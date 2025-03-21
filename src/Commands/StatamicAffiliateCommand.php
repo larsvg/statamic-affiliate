@@ -107,10 +107,18 @@ abstract class StatamicAffiliateCommand extends Command
                 'src' => str_replace('images/', '', $image),
             ]);
 
-            $aiEnhanced = $this->enhancePropertiesWithAi($item, $entry);
+            $aiEnhancements = $this->enhancePropertiesWithAi($item, $entry);
 
-            if (!empty($aiEnhanced)) {
-                $entry->set('product_description_ai', $aiEnhanced['productDescription']);
+            if (!empty($aiEnhancements)) {
+                if (isset($aiEnhancements['productDescription'])) {
+                    $entry->set('product_description_ai', $aiEnhancements['productDescription']);
+                    unset($aiEnhancements['productDescription']);
+                }
+
+                foreach ($aiEnhancements as $field => $value) {
+                    $entry->set($field, $value);
+                }
+
                 $entry->set('regenerate_ai', false);
             }
 

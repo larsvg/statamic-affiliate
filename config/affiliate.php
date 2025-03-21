@@ -13,6 +13,6 @@ return [
     'ai_output' => [
         'productDescription' => '',
         'color'              => '',
-        'categories'         => [],
+        'category'           => [],
     ]
 ];
