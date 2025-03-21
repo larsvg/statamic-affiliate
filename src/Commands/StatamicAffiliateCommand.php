@@ -39,9 +39,10 @@ abstract class StatamicAffiliateCommand extends Command
         $this->availableCategories = Entry::query()
             ->where('collection', 'categories')
             ->get()
-            ->map(function ($entry) {;
+            ->map(function($entry) {
+                ;
                 return [
-                    'id' => $entry->id(),
+                    'id'    => $entry->id(),
                     'title' => $entry->title,
                 ];
             })
@@ -64,7 +65,7 @@ abstract class StatamicAffiliateCommand extends Command
     protected function importFeed(): void
     {
         foreach ($this->affiliateCollection as $item) {
-            $new   = false;
+            $new = false;
             try {
                 $entry = Entry::query()
                     ->where('collection', 'products')
@@ -88,7 +89,7 @@ abstract class StatamicAffiliateCommand extends Command
             $image = $this->uploadImage($item);
 
             if (empty($image)) {
-                $this->info('Error on image for ' . $item->productName );
+                $this->info('Error on image for ' . $item->productName);
                 continue;
             }
 
@@ -213,33 +214,19 @@ abstract class StatamicAffiliateCommand extends Command
             $this->info('AI enhancement already done');
             return null;
         }
+        $this->aiEnhancedItems++;
 
-        $input = [
+        $input  = [
             'productName'         => $item->productName,
             'productDescription'  => $item->productDescription,
             'availableCategories' => $this->availableCategories,
         ];
-
-        $output = [
-            'productDescription' => '',
-            'hasWheels'          => false,
-            'hasLid'             => false,
-            'hasDoors'           => false,
-            'loadCapacityInKg'   => 0,
-            'material'           => '',
-            'lengthCm'           => 0,
-            'widthCm'            => 0,
-            'heightCm'           => 0,
-            'color'              => '',
-            'categories'         => [],
-        ];
-
-        $this->aiEnhancedItems++;
+        $output = config('affiliate.ai_output');
         $prompt = config('affiliate.ai_prompt');
         $prompt = str_replace('{input}', json_encode($input), $prompt);
         $prompt = str_replace('{output}', json_encode($output), $prompt);
         $result = OpenAI::chat()->create([
-            'model' => 'gpt-4o-mini',
+            'model'    => 'gpt-4o-mini',
             'messages' => [
                 ['role' => 'user', 'content' => $prompt],
             ],
