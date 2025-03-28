@@ -64,7 +64,6 @@ abstract class StatamicAffiliateCommand extends Command
 
     protected function importFeed(): void
     {
-        $aiEnhanced = false;
         foreach ($this->affiliateCollection as $item) {
             $new = false;
             try {
@@ -123,7 +122,6 @@ abstract class StatamicAffiliateCommand extends Command
                 $this->info('AI enhance: ' . $item->productName);
 
                 $entry->set('regenerate_ai', false);
-                $aiEnhanced = true;
             }
 
             if (!empty($item->merchantName)) {
@@ -135,11 +133,6 @@ abstract class StatamicAffiliateCommand extends Command
             }
 
             $entry->save();
-
-            if ($aiEnhanced) {
-                dd($entry);
-            }
-
 
             if ($new) {
                 $this->created[] = $entry;
