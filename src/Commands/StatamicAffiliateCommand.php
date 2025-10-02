@@ -86,12 +86,11 @@ abstract class StatamicAffiliateCommand extends Command
                 $new = true;
             }
 
-            $image = $this->uploadImage($item);
-
-            if (empty($image)) {
-                $this->info('Error on image for ' . $item->productName);
-                continue;
-            }
+//            $image = $this->uploadImage($item);
+//            if (empty($image)) {
+//                $this->info('Error on image for ' . $item->productName);
+//                continue;
+//            }
 
             $entry->slug(Str::slug($item->productName));
             $entry->set('affiliate_link', $item->afilliateLink);
@@ -103,9 +102,9 @@ abstract class StatamicAffiliateCommand extends Command
             $entry->set('stock', $item->stock);
             $entry->set('feed_name', $this->feedName);
             $entry->set('image', $item->image);
-            $entry->set('responsive', [
-                'src' => str_replace('images/', '', $image),
-            ]);
+//            $entry->set('responsive', [
+//                'src' => str_replace('images/', '', $image),
+//            ]);
 
             $aiEnhancements = $this->enhancePropertiesWithAi($item, $entry);
 
